@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ケモトレ - ケモノと鍛える自宅筋トレ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ケモトレ">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+  :root{
+    --bg:#0e1220; --bg2:#161c30; --card:#1c2440; --card2:#232d4f;
+    --line:#2c3860; --txt:#eaf0ff; --sub:#95a3c7; --accent:#7aa2ff;
+    --good:#4ade80; --warn:#fbbf24; --exp:#a78bfa;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Hiragino Kaku Gothic ProN','Yu Gothic UI',system-ui,sans-serif;
+    background:radial-gradient(1200px 800px at 50% -12%,#1a2340,var(--bg) 60%);
+    color:var(--txt);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .app{max-width:520px; margin:0 auto; padding:16px 16px 90px; position:relative;}
+  .hidden{display:none !important;}
+
+  /* ---- Top bar ---- */
+  .topbar{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+  .logo{font-size:22px; font-weight:800; letter-spacing:.5px;}
+  .logo .paw{color:var(--accent);}
+  .stat-mini{margin-left:auto; text-align:right; font-size:12px; color:var(--sub);}
+  .stat-mini b{color:var(--txt); font-size:14px;}
+
+  .lvbar-wrap{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 14px; margin-bottom:16px;}
+  .lvrow{display:flex; align-items:center; gap:10px; font-size:13px;}
+  .lv-badge{background:linear-gradient(135deg,#a78bfa,#7aa2ff); color:#0e1220; font-weight:800; border-radius:10px; padding:4px 10px; font-size:13px;}
+  .streak{margin-left:auto; color:var(--warn); font-weight:700;}
+  .bar{height:9px; background:#0c1224; border-radius:99px; overflow:hidden; margin-top:9px; border:1px solid var(--line);}
+  .bar > i{display:block; height:100%; background:linear-gradient(90deg,var(--exp),#7aa2ff); width:0; transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .exp-txt{font-size:11px; color:var(--sub); margin-top:5px; text-align:right;}
+
+  h2.sec{font-size:14px; color:var(--sub); margin:20px 4px 10px; font-weight:700; letter-spacing:.4px;}
+
+  /* ---- Trainer select ---- */
+  .trainers{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
+  .tcard{background:var(--card); border:2px solid var(--line); border-radius:18px; padding:12px 8px 10px; text-align:center; cursor:pointer; transition:.2s; position:relative;}
+  .tcard:hover{transform:translateY(-2px);}
+  .tcard.active{border-color:var(--tc); box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 30%,transparent), 0 8px 26px -12px var(--tc);}
+  .tcard .face{width:82px; height:82px; margin:0 auto 6px; border-radius:14px; overflow:hidden; background:#0c1224;}
+  .face svg,.face img,.wo-face svg,.wo-face img{width:100%; height:100%; display:block; object-fit:cover;}
+  .tcard .tname{font-weight:800; font-size:14px;}
+  .tcard .trole{font-size:10px; color:var(--sub); margin-top:2px;}
+  .tcard .aff{font-size:10px; margin-top:6px; color:var(--tc); font-weight:700;}
+  .tcard .affbar{height:5px; background:#0c1224; border-radius:99px; margin-top:4px; overflow:hidden; border:1px solid var(--line);}
+  .tcard .affbar > i{display:block; height:100%; background:var(--tc); width:0; transition:width .5s;}
+
+  /* ---- Menu ---- */
+  .menu-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .mcard{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px; cursor:pointer; transition:.15s; display:flex; flex-direction:column; gap:4px; min-height:92px;}
+  .mcard:hover{background:var(--card2); border-color:var(--accent);}
+  .mcard .mi{font-size:24px;}
+  .mcard .mt{font-weight:800; font-size:15px;}
+  .mcard .md{font-size:11px; color:var(--sub); line-height:1.4;}
+  .mcard.wide{grid-column:1 / -1; flex-direction:row; align-items:center; gap:12px;}
+  .mcard.wide .mi{font-size:26px;}
+
+  /* ---- Buttons ---- */
+  .btn{border:none; border-radius:14px; padding:14px 18px; font-size:16px; font-weight:800; cursor:pointer; width:100%; transition:.15s; font-family:inherit;}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#5b7fff); color:#fff;}
+  .btn-primary:active{transform:scale(.98);}
+  .btn-ghost{background:var(--card); color:var(--txt); border:1px solid var(--line);}
+  .btn-good{background:linear-gradient(135deg,#34d399,#10b981); color:#04120b;}
+  .btn-row{display:flex; gap:10px;}
+  .btn-sm{padding:10px 12px; font-size:13px; border-radius:12px;}
+
+  /* ---- Modal / sub screens ---- */
+  .sheet{position:fixed; inset:0; background:rgba(6,9,18,.72); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; z-index:70; padding:0;}
+  .sheet-inner{background:var(--bg2); border:1px solid var(--line); border-radius:22px 22px 0 0; width:100%; max-width:520px; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto; animation:up .25s ease;}
+  @keyframes up{from{transform:translateY(30px); opacity:.4;} to{transform:none; opacity:1;}}
+  .sheet h3{margin:0 0 4px; font-size:18px;}
+  .sheet p.hint{margin:0 0 14px; color:var(--sub); font-size:12px;}
+
+  .chip-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;}
+  .chip{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:11px; text-align:center; cursor:pointer; font-weight:700; font-size:14px; transition:.15s;}
+  .chip.on{background:color-mix(in srgb,var(--accent) 24%,var(--card)); border-color:var(--accent);}
+  .chip small{display:block; color:var(--sub); font-size:10px; font-weight:500; margin-top:2px;}
+
+  /* free list */
+  .ex-list{display:flex; flex-direction:column; gap:8px; margin-bottom:14px;}
+  .ex-item{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px;}
+  .ex-item.on{border-color:var(--good);}
+  .ex-item .exn{font-weight:700; font-size:14px;}
+  .ex-item .exm{font-size:10px; color:var(--sub);}
+  .ex-item .spin{margin-left:auto; display:flex; align-items:center; gap:6px;}
+  .ex-item .spin button{width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:18px; font-weight:800; cursor:pointer;}
+  .ex-item .spin .val{min-width:52px; text-align:center; font-weight:800; font-size:13px;}
+  .ex-item .tog{width:26px; height:26px; border-radius:8px; border:2px solid var(--line); cursor:pointer; flex-shrink:0;}
+  .ex-item.on .tog{background:var(--good); border-color:var(--good);}
+  .ex-info{width:26px; height:26px; border-radius:50%; border:1px solid var(--line); background:var(--card2); color:var(--sub); font-weight:800; font-size:13px; cursor:pointer; flex-shrink:0;}
+  .ex-desc{background:var(--card2); border:1px solid var(--line); border-top:none; border-radius:0 0 12px 12px; margin:-6px 2px 0; padding:10px 12px; font-size:12px; color:var(--sub); line-height:1.6;}
+
+  /* ---- Workout runner ---- */
+  #workout{position:fixed; inset:0; background:var(--bg); z-index:50; display:flex; flex-direction:column; padding:16px 16px calc(16px + env(safe-area-inset-bottom)); max-width:520px; margin:0 auto;}
+  .wo-top{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--sub);}
+  .wo-top .quit{margin-left:auto; background:none; border:1px solid var(--line); color:var(--sub); border-radius:10px; padding:6px 10px; cursor:pointer; font-size:12px;}
+  .wo-prog{display:flex; gap:5px; margin-top:12px;}
+  .wo-prog i{flex:1; height:6px; border-radius:99px; background:var(--line);}
+  .wo-prog i.done{background:var(--good);}
+  .wo-prog i.cur{background:var(--accent);}
+
+  .wo-stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px;}
+  .wo-face{width:min(58vw,230px); height:min(58vw,230px); margin-bottom:6px; border-radius:22px; overflow:hidden; background:#0c1224; filter:drop-shadow(0 10px 28px rgba(0,0,0,.55));}
+  /* 文字サイズ 小/中/大 */
+  body.fs-s .app, body.fs-s #workout .wo-stage, body.fs-s .sheet-inner{zoom:0.9;}
+  body.fs-l .app, body.fs-l #workout .wo-stage, body.fs-l .sheet-inner{zoom:1.18;}
+  .bubble{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:10px 16px; font-size:14px; font-weight:600; max-width:340px; position:relative; margin-bottom:14px; line-height:1.5;}
+  .bubble:after{content:''; position:absolute; top:-8px; left:50%; transform:translateX(-50%); border:7px solid transparent; border-bottom-color:var(--card); border-top:0;}
+  .wo-exname{font-size:28px; font-weight:900; letter-spacing:.5px;}
+  .wo-target{font-size:64px; font-weight:900; line-height:1; margin:6px 0; background:linear-gradient(135deg,var(--accent),#a78bfa); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .wo-unit{font-size:18px; color:var(--sub); font-weight:700; margin-top:-6px;}
+  .wo-note{font-size:12px; color:var(--sub); max-width:320px; line-height:1.5;}
+  .rest-badge{color:var(--warn); font-weight:800; font-size:14px; letter-spacing:1px;}
+
+  .wo-actions{display:flex; flex-direction:column; gap:10px;}
+
+  /* ---- Result ---- */
+  .result-card{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px; text-align:center;}
+  .result-card .big{font-size:24px; font-weight:900; margin-bottom:4px;}
+  .gain{display:flex; justify-content:center; gap:22px; margin:16px 0;}
+  .gain div{text-align:center;}
+  .gain .g-n{font-size:26px; font-weight:900;}
+  .gain .g-l{font-size:11px; color:var(--sub);}
+  .pop{background:color-mix(in srgb,var(--exp) 18%,var(--card)); border:1px solid var(--exp); border-radius:12px; padding:10px; margin-top:10px; font-weight:800; font-size:14px; color:#d6ccff;}
+  .pop.rank{background:color-mix(in srgb,var(--good) 16%,var(--card)); border-color:var(--good); color:#c9ffe4;}
+
+  /* ---- bottom tab ---- */
+  .tabbar{position:fixed; bottom:0; left:0; right:0; background:rgba(14,18,32,.92); backdrop-filter:blur(10px); border-top:1px solid var(--line); display:flex; z-index:30; max-width:520px; margin:0 auto; padding-bottom:env(safe-area-inset-bottom);}
+  .tabbar button{flex:1; background:none; border:none; color:var(--sub); padding:10px 0 12px; font-size:11px; cursor:pointer; font-family:inherit; display:flex; flex-direction:column; align-items:center; gap:3px;}
+  .tabbar button.on{color:var(--accent);}
+  .tabbar .ti{font-size:20px;}
+
+  /* stats page */
+  .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;}
+  .sbox{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px;}
+  .sbox .sv{font-size:24px; font-weight:900;}
+  .sbox .sl{font-size:11px; color:var(--sub); margin-top:2px;}
+  .badge-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .bd{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:12px; display:flex; gap:8px; align-items:center;}
+  .bd.lock{opacity:.4;}
+  .bd .be{font-size:20px;}
+  .bd b{display:block; font-size:13px;}
+  .bd small{color:var(--sub);}
+
+  .relship{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:10px; display:flex; gap:12px; align-items:center;}
+  .relship .face{width:54px; height:54px; flex-shrink:0; border-radius:12px; overflow:hidden; background:#0c1224;}
+  .relship .rname{font-weight:800;}
+  .relship .rrank{font-size:12px; color:var(--tc); font-weight:700;}
+  .relship .rbar{height:7px; background:#0c1224; border-radius:99px; margin-top:6px; overflow:hidden; border:1px solid var(--line);}
+  .relship .rbar > i{display:block; height:100%; background:var(--tc); width:0; transition:.5s;}
+  .relship .rp{font-size:10px; color:var(--sub); margin-top:3px;}
+
+  .setting-row{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:10px;}
+  .setting-row .sn{font-weight:700; font-size:14px;}
+  .setting-row .sd{font-size:11px; color:var(--sub);}
+  .toggle{margin-left:auto; width:50px; height:28px; border-radius:99px; background:#0c1224; border:1px solid var(--line); position:relative; cursor:pointer; transition:.2s; flex-shrink:0;}
+  .toggle > i{position:absolute; top:2px; left:2px; width:22px; height:22px; border-radius:50%; background:var(--sub); transition:.2s;}
+  .toggle.on{background:color-mix(in srgb,var(--good) 40%,#0c1224); border-color:var(--good);}
+  .toggle.on > i{left:24px; background:var(--good);}
+
+  .toast{position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-80px); background:var(--card2); border:1px solid var(--accent); color:var(--txt); padding:10px 18px; border-radius:99px; font-weight:800; font-size:14px; z-index:99; opacity:0; transition:.35s; white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0); opacity:1;}
+  .count-tap{font-size:12px; color:var(--sub); margin-top:8px;}
+
+  /* ---- Form & muscle guide ---- */
+  .guide-hero{background:linear-gradient(135deg,#26345d,#1c2440);border:1px solid #4762a5;border-radius:18px;padding:16px;margin-bottom:12px;}
+  .guide-hero h3{margin:0 0 5px;font-size:19px;}
+  .guide-tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;}
+  .guide-tabs::-webkit-scrollbar{display:none;}
+  .guide-tab{width:auto;white-space:nowrap;padding:9px 12px;font-size:12px;border-radius:99px;}
+  .guide-tab.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .guide-list{display:flex;flex-direction:column;gap:8px;}
+  .guide-item{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;color:var(--txt);font-family:inherit;cursor:pointer;width:100%;}
+  .guide-item:active{transform:scale(.99);}
+  .guide-item .gicon{width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--accent) 20%,var(--card2));display:grid;place-items:center;font-size:20px;flex:0 0 auto;}
+  .guide-item .gn{font-size:14px;font-weight:800;}
+  .guide-item .gm{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.35;}
+  .guide-item .arrow{margin-left:auto;color:var(--sub);font-size:18px;}
+  .guide-detail-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+  .guide-back{width:42px;flex:0 0 42px;padding:9px 0;}
+  .muscle-figures{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+  .muscle-figure{background:#10172a;border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center;}
+  .muscle-figure svg{width:100%;height:190px;display:block;}
+  .muscle-figure small{font-size:10px;color:var(--sub);}
+  .muscle-base{fill:#36405f;stroke:#66739a;stroke-width:1.5;}
+  .muscle-zone{fill:#465273;stroke:#7380a5;stroke-width:1;}
+  .muscle-zone.hit{fill:#ff6b7a;stroke:#ffc0c7;filter:drop-shadow(0 0 5px #ff6b7a88);}
+  .muscle-zone.assist{fill:#f5a94e;stroke:#ffe1a3;}
+  .guide-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;}
+  .guide-section h4{font-size:12px;color:#aebdff;margin:0 0 5px;letter-spacing:.3px;}
+  .guide-section p,.guide-section ol{font-size:13px;line-height:1.65;margin:0;color:var(--txt);}
+  .guide-section ol{padding-left:21px;}
+  .guide-warning{border-color:#72424b;background:#2b202d;}
+  .guide-warning h4{color:#ffacb5;}
+  .guide-disclaimer{font-size:11px;color:var(--sub);line-height:1.55;margin:12px 2px;}
+  .wo-focus{font-size:12px;color:#c8d3ff;background:#171f37;border:1px solid #334572;border-radius:10px;padding:7px 10px;max-width:340px;line-height:1.45;}
+  .pelvic-phase{font-size:15px;color:#c7d2fe;font-weight:900;margin-top:2px;}
+  .pelvic-cue{font-size:12px;color:var(--sub);line-height:1.5;max-width:330px;}
+  @media(max-width:420px){
+    .sheet-inner{padding-left:14px;padding-right:14px;}
+    .muscle-figure svg{height:170px;}
+    .wo-exname{font-size:24px;}
+    .wo-target{font-size:58px;}
+    .btn-row{flex-wrap:wrap;}
+    .btn-row .btn{min-width:130px;flex:1;}
+  }
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- ===== MAIN ===== -->
+<div class="app" id="main">
+  <div class="topbar">
+    <div class="logo"><span class="paw">🐾</span> ケモトレ</div>
+    <div class="stat-mini">連続 <b id="mini-streak">0</b>日 / 累計 <b id="mini-total">0</b>回</div>
+  </div>
+
+  <!-- HOME TAB -->
+  <div id="tab-home">
+    <div class="lvbar-wrap">
+      <div class="lvrow">
+        <span class="lv-badge">Lv.<span id="lv">1</span></span>
+        <span style="font-size:13px;color:var(--sub)">トレーニー</span>
+        <span class="streak">🔥 <span id="streak">0</span>日連続</span>
+      </div>
+      <div class="bar"><i id="expbar"></i></div>
+      <div class="exp-txt"><span id="exp-cur">0</span> / <span id="exp-need">100</span> EXP</div>
+    </div>
+
+    <h2 class="sec">今日のトレーナーを選ぶ</h2>
+    <div class="trainers" id="trainers"></div>
+    <div id="trainer-line" style="font-size:12px;color:var(--sub);margin:10px 4px 0;line-height:1.5;"></div>
+
+    <h2 class="sec">メニューを選ぶ</h2>
+    <div class="menu-grid">
+      <div class="mcard" data-mode="beginner">
+        <div class="mi">🌱</div><div class="mt">初心者 全身</div>
+        <div class="md">腕立て・スクワット・腹筋・プランクの王道4種</div>
+      </div>
+      <div class="mcard" data-mode="bodypart">
+        <div class="mi">🎯</div><div class="mt">部位別</div>
+        <div class="md">胸・腹・脚など鍛えたい部位を選ぶ</div>
+      </div>
+      <div class="mcard" data-mode="hiit">
+        <div class="mi">⚡</div><div class="mt">時短HIIT</div>
+        <div class="md">20秒運動→10秒休憩の高強度サーキット</div>
+      </div>
+      <div class="mcard" data-mode="daily">
+        <div class="mi">🎲</div><div class="mt">おまかせ日替わり</div>
+        <div class="md">今日の4種をアプリが自動でセレクト</div>
+      </div>
+      <div class="mcard wide" data-mode="free">
+        <div class="mi">🛠️</div>
+        <div><div class="mt">フリー（自分で選ぶ）</div>
+        <div class="md">腕立て・腹筋など好きな種目と回数を自由に組む</div></div>
+      </div>
+      <div class="mcard wide" data-mode="guide" role="button" tabindex="0" aria-label="フォーム・筋肉図鑑を開く">
+        <div class="mi">🧭</div>
+        <div><div class="mt">フォーム・筋肉図鑑</div>
+        <div class="md">鍛える筋肉、意識する場所、呼吸、正しい感覚を図で確認</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BONDS TAB -->
+  <div id="tab-bonds" class="hidden">
+    <h2 class="sec">トレーナーとの絆</h2>
+    <div id="bonds-list"></div>
+    <div style="font-size:11px;color:var(--sub);margin:12px 4px;line-height:1.6;">
+      一緒に鍛えるほど親密度が上がり、ランクが上がると新しいセリフや素の一面が解放されます。
+    </div>
+  </div>
+
+  <!-- STATS TAB -->
+  <div id="tab-stats" class="hidden">
+    <h2 class="sec">記録</h2>
+    <div class="stat-grid">
+      <div class="sbox"><div class="sv" id="st-total">0</div><div class="sl">累計トレーニング回数</div></div>
+      <div class="sbox"><div class="sv" id="st-reps">0</div><div class="sl">累計レップ数</div></div>
+      <div class="sbox"><div class="sv" id="st-streak">0</div><div class="sl">現在の連続日数</div></div>
+      <div class="sbox"><div class="sv" id="st-best">0</div><div class="sl">最高連続日数</div></div>
+      <div class="sbox" style="grid-column:1/-1"><div class="sv" id="st-tips">0</div><div class="sl">学んだ豆知識</div></div>
+    </div>
+    <h2 class="sec">実績バッジ</h2>
+    <div class="badge-grid" id="badge-grid"></div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="tab-settings" class="hidden">
+    <h2 class="sec">設定</h2>
+    <div class="setting-row">
+      <div><div class="sn">🔊 応援ボイス</div><div class="sd">トレーナーがセリフを声で読み上げます</div></div>
+      <div class="toggle" id="tg-voice"><i></i></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="sn">🗣️ 音声が無いセリフを補う</div><div class="sd">録音が無いセリフを端末の読み上げで代替（オフで無音に）</div></div>
+      <div class="toggle" id="tg-tts"><i></i></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="sn">🔔 効果音</div><div class="sd">タイマーのカウント音</div></div>
+      <div class="toggle" id="tg-sound"><i></i></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="sn">🔠 文字サイズ</div><div class="sd">画面の文字の大きさ</div></div>
+      <div class="spin" style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+        <button class="btn btn-ghost btn-sm fs-btn" data-fs="s" style="width:44px">小</button>
+        <button class="btn btn-ghost btn-sm fs-btn" data-fs="m" style="width:44px">中</button>
+        <button class="btn btn-ghost btn-sm fs-btn" data-fs="l" style="width:44px">大</button>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div><div class="sn">⏱️ セット間の休憩</div><div class="sd" id="rest-label">30秒</div></div>
+      <div class="spin" style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+        <button class="btn btn-ghost btn-sm" id="rest-minus" style="width:40px">−</button>
+        <span style="min-width:40px;text-align:center;font-weight:800" id="rest-val">30</span>
+        <button class="btn btn-ghost btn-sm" id="rest-plus" style="width:40px">＋</button>
+      </div>
+    </div>
+    <h2 class="sec">トレーナーの見た目</h2>
+    <div id="img-swap"></div>
+    <div style="font-size:11px;color:var(--sub);margin:4px 4px 0;line-height:1.6;">
+      好きなトレーナー画像を読み込めます。「ホーム用」と「トレ用（トレーニング中に表示）」を別々に設定できます。トレ用が未設定ならホーム用が使われます。画像は端末内だけに保存され、外部には送信されません。
+    </div>
+
+    <div style="margin-top:20px;">
+      <button class="btn btn-ghost btn-sm" id="reset-btn" style="color:#ff8a8a;border-color:#5a2a3a">データをリセット</button>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin:16px 4px;line-height:1.6;">
+      進捗はこの端末のブラウザに保存されます。ブックマークしておけばいつでも続きから。<br><br>
+      録音ボイス使用時のクレジット: VOICEVOX:白上虎太郎 / VOICEVOX:玄野武宏 / VOICEVOX:青山龍星
+    </div>
+  </div>
+</div>
+
+<!-- ===== TABBAR ===== -->
+<div class="tabbar" id="tabbar">
+  <button data-tab="home" class="on"><span class="ti">🏠</span>ホーム</button>
+  <button data-tab="bonds"><span class="ti">💞</span>絆</button>
+  <button data-tab="stats"><span class="ti">📊</span>記録</button>
+  <button data-tab="settings"><span class="ti">⚙️</span>設定</button>
+</div>
+
+<!-- ===== WORKOUT RUNNER ===== -->
+<div id="workout" class="hidden">
+  <div class="wo-top">
+    <span id="wo-title">メニュー</span>
+    <button class="quit" id="wo-quit">やめる</button>
+  </div>
+  <div class="wo-prog" id="wo-prog"></div>
+  <div class="wo-stage">
+    <div class="wo-face" id="wo-face"></div>
+    <div class="bubble" id="wo-bubble">いくぞ！</div>
+    <div class="rest-badge hidden" id="wo-rest">休憩</div>
+    <div class="wo-exname" id="wo-exname">腕立て伏せ</div>
+    <div class="wo-target" id="wo-target">10</div>
+    <div class="wo-unit" id="wo-unit">回</div>
+    <div class="pelvic-phase hidden" id="wo-phase"></div>
+    <div class="pelvic-cue hidden" id="wo-cue"></div>
+    <div class="wo-focus" id="wo-focus"></div>
+    <div class="wo-note" id="wo-note"></div>
+  </div>
+  <div class="wo-actions" id="wo-actions"></div>
+</div>
+
+<!-- ===== SHEET (menu config) ===== -->
+<div id="sheet" class="sheet hidden" role="dialog" aria-modal="true" aria-label="詳細画面">
+  <div class="sheet-inner" id="sheet-inner"></div>
+</div>
+
+<script>
+"use strict";
+
+/* ============ storage (safe) ============ */
+const KEY='kemotore_v1';
+let mem=null;
+function load(){
+  try{const s=localStorage.getItem(KEY); if(s) return JSON.parse(s);}catch(e){}
+  return mem;
+}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){ mem=JSON.parse(JSON.stringify(state)); }
+}
+
+/* ============ trainers ============ */
+const TRAINERS={
+  cat:{
+    id:'cat', name:'シャドウ', species:'クロネコ♂', role:'クール系', color:'#8b9dff',
+    lines:{
+      greet:['……来たか。準備はいいな。','ふん、今日もやる気か。悪くない。','時間の無駄はしない。始めるぞ。',
+        'また会ったな。……別に、待ってたわけじゃない。','ふん、その顔つきなら今日はやれそうだな。',
+        {text:'朝からとはな。……いい心がけだ。',when:{hour:[4,10]}},
+        {text:'昼の運動は悪くない。目を覚ませ。',when:{hour:[10,14]}},
+        {text:'夜か。ちょうどいい、静かに集中できる。',when:{hour:[18,22]}},
+        {text:'こんな時間に……。まあいい、付き合ってやる。',when:{hour:[22,24]}},
+        {text:'3日続いたか。……三日坊主は免れたな。',when:{streakMin:3}},
+        {text:'7日連続だと？ お前、本気なんだな。',when:{streakMin:7}},
+        {text:'この連続記録……大したものだ。認めてやる。',when:{streakMin:14}},
+        {text:'……久しぶりだな。心配した、わけじゃないが。',when:{daysAwayMin:3}},
+        {text:'しばらく顔を見なかったな。……戻ってきたなら、いい。',when:{daysAwayMin:7}},
+        {text:'お前とももう長い付き合いだな。……悪くない。',when:{rankMin:3}},
+        {text:'お前の顔を見ると、少し調子が出る。……言わせるな。',when:{rankMin:4}}],
+      start:['集中しろ。フォームが命だ。','数えてやる。行け。','余計なことは考えるな。',
+        '見ていてやる。無様な真似はするなよ。','呼吸を整えろ。それから始めろ。','一回一回、丁寧にやれ。雑なのは嫌いだ。',
+        '楽をしようとするな。効かせろ。',
+        {text:'脚か。逃げずに向き合うだけ、上等だ。',when:{part:'脚'}},
+        {text:'腹筋だな。……サボると腹が出るぞ。',when:{part:'腹'}}],
+      during:['……悪くないペースだ。','まだ続けられるだろ。','呼吸を止めるな。',
+        'フォームが崩れてきたぞ。締めろ。','そこで止めるな。あと少しだ。','……ちゃんと見ているぞ。手を抜くな。',
+        'いいぞ。その調子を保て。','きついのは効いている証拠だ。耐えろ。','根性を見せてみろ。'],
+      finishSet:['ふん、やるじゃないか。','この程度、当然だな。','……ちゃんと効いてるぞ。',
+        '悪くない。次に行くぞ。','合格だ。休みは手短にな。','お前にしては上出来だ。',
+        '……見直した、とは言わないでおく。','しっかり追い込めているな。','その意気だ。緩めるなよ。'],
+      finishWorkout:['……よくやった。今日は認めてやる。','これで終わりだ。無理はするなよ。','悪くない出来だった。また来い。',
+        '全部やり切ったか。……ふん、大したものだ。','終わりだ。水を飲め、しっかり休め。','お疲れ、とでも言えばいいのか。……まあ、よくやった。',
+        {text:'連続記録、また伸びたな。……大事にしろよ。',when:{streakMin:7}},
+        {text:'ここまで続けたお前を、少しは認めてやる。',when:{totalMin:30}},
+        {text:'朝のうちに済ませたか。……効率的だな。',when:{hour:[4,10]}},
+        {text:'こんな時間までよくやる。……無理はするな、と言っておく。',when:{hour:[22,24]}},
+        {text:'お前と鍛えるのも、板についてきたな。',when:{rankMin:3}},
+        {text:'……今日も来てくれて、その、助かった。忘れろ今のは。',when:{rankMin:4}}],
+      rankUp:{
+        1:'……別に、お前を気にかけてるわけじゃない。',
+        2:'相棒、か。……悪くない響きだ。',
+        3:'お前となら、もう少し付き合ってやってもいい。',
+        4:'……お前がサボると、少し心配になる。認めたくはないがな。',
+        5:'ここまで一緒に来たやつは、お前だけだ。……ずっとそばにいろ。'
+      }
+    }
+  },
+  dog:{
+    id:'dog', name:'ラン', species:'ゴールデン♂', role:'優しい系', color:'#ffbf5b',
+    lines:{
+      greet:['来てくれてありがとう！今日も一緒にがんばろ！','わっ、会えて嬉しい！さあ始めよ〜！','キミの顔見れただけで元気出た！',
+        'やっほー！今日もボクと鍛えよ！','待ってたよ！さあ、いっしょに頑張ろうね！',
+        {text:'おはよう！朝から偉いね、キミ最高だよ！',when:{hour:[4,10]}},
+        {text:'お昼の運動、いいね！シャキッとするよ！',when:{hour:[10,14]}},
+        {text:'こんばんは！夜までお疲れさま、少しだけ動こっか！',when:{hour:[18,22]}},
+        {text:'こんな遅くまで頑張るんだね。無理はしないでね？',when:{hour:[22,24]}},
+        {text:'3日連続だよ！すごいすごい、続いてる！',when:{streakMin:3}},
+        {text:'7日も連続！？キミ本当にすごいよ、感動した！',when:{streakMin:7}},
+        {text:'2週間も続いてる…！ボク、キミを尊敬しちゃう！',when:{streakMin:14}},
+        {text:'わぁ、久しぶり！また会えて嬉しいよ、戻ってきてくれてありがとう！',when:{daysAwayMin:3}},
+        {text:'ずっと待ってたよ！でも責めたりしないよ、また一緒にやろ！',when:{daysAwayMin:7}},
+        {text:'キミと会うのが毎日の楽しみなんだ！',when:{rankMin:3}},
+        {text:'えへへ、キミと一緒だと元気が二倍になるんだ！',when:{rankMin:4}}],
+      start:['大丈夫、キミならできるよ！','ゆっくりでいいからね！','ボクがついてるよ！',
+        '無理しない範囲で、いこう！','フォーム大事に、ね？ボク見てるよ！','深呼吸して、いっしょに始めよ！',
+        '笑顔でいこう、そのほうが力出るよ！',
+        {text:'脚の日だね！終わったらぷるぷるするけど頑張ろ！',when:{part:'脚'}},
+        {text:'腹筋いこう！キミのお腹、かっこよくなるよ！',when:{part:'腹'}}],
+      during:['いいよいいよ、その調子！','すごい、ちゃんと続いてる！','あと少し、一緒にがんばろ！',
+        '呼吸わすれないでね、吸って、吐いて！','キミならまだいける、信じてるよ！','つらいよね、でもボクずっとそばにいるよ！',
+        'うんうん、フォームきれいだよ！','もうちょっと、もうちょっとだよ！','ファイト！キミなら大丈夫！'],
+      finishSet:['やったね！すっごく頑張った！','えらい！ちゃんとできたね！','うんうん、キミは本当にすごい！',
+        'ナイス！きれいなフォームだったよ！','よし、ひと休みしよ！水分もね！','キミの頑張り、ボクちゃんと見てたよ！',
+        'この調子この調子！次もいこう！','はなまるあげちゃう！えらい！','少しずつ強くなってるの、伝わってくるよ！'],
+      finishWorkout:['今日も最後までえらかった！ボク感動しちゃった！','キミが頑張る姿、大好きだよ！お疲れさま！','よくやったね！ゆっくり休んでね！',
+        '全部やりきったね！キミは本当にすごいよ！','お疲れさま！水分とって、しっかり休むんだよ！','はぁ〜、いい汗かいたね！ボクも嬉しい！',
+        {text:'連続記録更新だね！すごいよ、この調子！',when:{streakMin:7}},
+        {text:'ここまで続けたキミ、本当に尊敬する！',when:{totalMin:30}},
+        {text:'朝から動いて偉すぎるよ！今日一日いい日になるね！',when:{hour:[4,10]}},
+        {text:'夜遅くまでお疲れさま。あったかくして休んでね！',when:{hour:[22,24]}},
+        {text:'キミと鍛える時間、ボクの宝物だよ！',when:{rankMin:3}},
+        {text:'キミのこと、もう親友だと思ってるんだ。えへへ！',when:{rankMin:4}}],
+      rankUp:{
+        1:'キミともっと仲良くなれて嬉しいな！',
+        2:'キミと一緒だと、練習が全然つらくないんだ！',
+        3:'相棒だね！これからもずっとよろしく！',
+        4:'キミがいない日は、ちょっと寂しいんだ……えへへ。',
+        5:'キミはボクの一番の親友だよ。一生応援させてね！'
+      }
+    }
+  },
+  bear:{
+    id:'bear', name:'ゴウ', species:'ヒグマ♂', role:'パワフル系', color:'#ff7a6b',
+    lines:{
+      greet:['よぉ相棒ォ！鍛える準備はできてんな！','ガハハ！今日もぶち上げていくぞォ！','待ってたぜ！筋肉が呼んでるぜ！',
+        'おう、来たな相棒！さっそく汗かこうぜ！','よし来た！今日も一緒に燃えようぜェ！',
+        {text:'朝から気合い入ってんなァ！最高のスタートだぜ！',when:{hour:[4,10]}},
+        {text:'昼の一発、いいねェ！午後もパワー全開だ！',when:{hour:[10,14]}},
+        {text:'夜の筋トレ、乙なもんだぜェ！いくぞ相棒！',when:{hour:[18,22]}},
+        {text:'こんな時間まで元気だなァ！だが無理すんなよ？',when:{hour:[22,24]}},
+        {text:'3日連続だとォ！？その調子だ、燃えてきたぜ！',when:{streakMin:3}},
+        {text:'7日連続ゥ！？お前、本物だな！惚れ直したぜ！',when:{streakMin:7}},
+        {text:'2週間ぶっ通しかァ！鉄の意志だぜ相棒！',when:{streakMin:14}},
+        {text:'おおォ、久しぶりじゃねェか！戻ってきてくれて嬉しいぜ！',when:{daysAwayMin:3}},
+        {text:'しばらく会えなくて寂しかったぜェ！さ、また一緒にやろうや！',when:{daysAwayMin:7}},
+        {text:'お前とはもう長い付き合いだなァ！最高の相棒だぜ！',when:{rankMin:3}},
+        {text:'お前がいると練習が二倍楽しいぜェ！ガハハ！',when:{rankMin:4}}],
+      start:['limit超えていけェ！','パワー全開だァ！','ビビんな、押し切れェ！',
+        '腹に力入れろォ！いくぞ相棒！','でかい声出していこうぜ、うおォ！','フォームだけは崩すなよォ、そこは譲れねェ！',
+        '気合いだ気合いッ！いくぜェ！',
+        {text:'脚の日だなァ！明日筋肉痛でも知らねェぞ、ガハハ！',when:{part:'脚'}},
+        {text:'腹筋いくぞォ！バキバキの腹、作ろうぜ！',when:{part:'腹'}}],
+      during:['そうだ、そのまま行けェ！','うおォ、いい筋肉だ！','まだまだいけるだろォ！',
+        'きついのは効いてる証拠だァ！耐えろ！','呼吸だ呼吸ゥ！止めんじゃねェぞ！','その粘り、最高だぜ相棒！',
+        'あと一発、絞り出せェ！','うおおォ！燃えてきたァ！','お前ならできる、俺が保証すらァ！'],
+      finishSet:['ナイスパワー！最高だぜ！','ガハハ！効いてるな！','その調子だァ、盛り上がってきたぜ！',
+        'よくやったァ！いい追い込みだ！','水飲んで、次いくぞォ！','お前の根性、しかと見たぜ相棒！',
+        'うおォ、ナイスファイト！','筋肉が喜んでるぜェ、ガハハ！','その意気だ、まだまだいけるぜ！'],
+      finishWorkout:['やり切ったなァ相棒！最高だったぜ！','ガハハ！今日のお前は輝いてたぜ！','よくやった！プロテインうめぇぞォ！',
+        '全メニュー完走だァ！お前は英雄だぜ！','お疲れさん相棒！水分とってしっかり休めよ！','いい汗かいたなァ！こういう日は飯がうめェぞ！',
+        {text:'連続記録更新だァ！お前の継続力、本物だぜ！',when:{streakMin:7}},
+        {text:'ここまで続けたお前を、俺は誇りに思うぜ相棒！',when:{totalMin:30}},
+        {text:'朝から鍛えるとはなァ！今日一日、無敵だぜ！',when:{hour:[4,10]}},
+        {text:'夜遅くまでお疲れさん！ちゃんと寝て回復しろよ！',when:{hour:[22,24]}},
+        {text:'お前と鍛える時間が、俺は一番好きだぜ！',when:{rankMin:3}},
+        {text:'お前は俺の生涯の相棒だ！これからもよろしくな！',when:{rankMin:4}}],
+      rankUp:{
+        1:'お前とはいい汗かけそうだァ！',
+        2:'お前は見どころがあるぜ、気に入った！',
+        3:'相棒！お前とならどこまでも登れる気がすらァ！',
+        4:'お前がいると練習が二倍楽しいぜ！離れんなよ！',
+        5:'お前は俺の生涯の相棒だ！一緒に頂点までいくぞォ！'
+      }
+    }
+  }
+};
+
+/* ============ affinity ranks ============ */
+const RANKS=[
+  {min:0,    name:'初対面'},
+  {min:100,  name:'顔見知り'},
+  {min:300,  name:'仲間'},
+  {min:600,  name:'相棒'},
+  {min:1000, name:'親友'},
+  {min:1600, name:'無二の存在'}
+];
+function rankIndex(p){let i=0; for(let k=0;k<RANKS.length;k++){if(p>=RANKS[k].min)i=k;} return i;}
+function rankName(p){return RANKS[rankIndex(p)].name;}
+function nextRankInfo(p){const i=rankIndex(p); if(i>=RANKS.length-1)return{max:true,cur:p,base:RANKS[i].min,next:RANKS[i].min}; return{max:false,base:RANKS[i].min,next:RANKS[i+1].min,cur:p};}
+
+/* ============ exercises ============ */
+// type: 'reps' or 'time'(sec).  m = 部位
+const EX={
+  pushup:{n:'腕立て伏せ',m:'胸・腕',type:'reps',def:10,note:'手は肩幅より少し広く、肩の真下につく。頭からかかとまで一直線をキープしたまま、ひじを曲げて胸を床すれすれまで下ろし、床を押して戻る。'},
+  kneepush:{n:'膝つき腕立て',m:'胸・腕',type:'reps',def:12,note:'腕立てがきつい人向け。ひざを床につけて負荷を軽くする。ひざから頭までまっすぐ保ち、胸を下ろして押し返す。'},
+  squat:{n:'スクワット',m:'脚',type:'reps',def:15,note:'足を肩幅に開き、つま先と膝は同じ方向へ。お尻を後ろに引きながら太ももが床と平行になるまでしゃがみ、かかとで立ち上がる。膝がつま先より前に出過ぎないように。'},
+  lunge:{n:'ランジ',m:'脚',type:'reps',def:12,note:'片足を大きく前に踏み出し、両ひざが90度になるまで腰を落とす。前のひざはつま先の真上まで。元に戻り、左右交互に。'},
+  calf:{n:'カーフレイズ',m:'脚',type:'reps',def:20,note:'まっすぐ立ち、かかとをできるだけ高く上げてつま先立ちに。ふくらはぎが縮むのを感じたら、ゆっくり下ろす。'},
+  crunch:{n:'クランチ（腹筋）',m:'腹',type:'reps',def:15,note:'あお向けでひざを立てる。おへそを覗き込むように背中の上側だけを丸め、肩を床から浮かせて戻す。首は引っ張らず、反動を使わずゆっくり。'},
+  legraise:{n:'レッグレイズ',m:'腹',type:'reps',def:12,note:'あお向けで両脚をそろえて伸ばす。腰を床につけたまま、脚を垂直近くまで上げてゆっくり下ろす。腰が反らないように。'},
+  bicycle:{n:'バイシクルクランチ',m:'腹',type:'reps',def:16,note:'あお向けで自転車をこぐように脚を動かし、ひじと反対側のひざを近づける。左右ひねって1回。ゆっくりと。'},
+  plank:{n:'プランク',m:'体幹',type:'time',def:30,note:'うつ伏せからひじとつま先で体を支える。頭・お尻・かかとを一直線にキープ。お尻が上がったり腰が落ちたりしないよう、お腹に力を入れて。'},
+  sideplank:{n:'サイドプランク',m:'体幹',type:'time',def:20,note:'横向きになり、片ひじと足の側面で体を支えて持ち上げる。頭から足まで一直線に。左右それぞれ行う。'},
+  pike:{n:'パイクプッシュアップ',m:'肩',type:'reps',def:10,note:'四つん這いからお尻を高く突き上げて「く」の字に。その姿勢のまま頭を床に近づけるようひじを曲げ、押し返す。肩に効く。'},
+  dips:{n:'椅子ディップス',m:'腕',type:'reps',def:12,note:'椅子のふちに手をつき、お尻を前に出す。ひじを後ろへ曲げて体を下ろし、二の腕で押し返す。'},
+  superman:{n:'バックエクステンション',m:'背中',type:'reps',def:15,note:'うつ伏せで両手足を伸ばす。背中を使って手と足を同時に浮かせ、少しキープして下ろす。反動をつけすぎない。'},
+  goodmorning:{n:'グッドモーニング',m:'背中',type:'reps',def:15,note:'足を肩幅に、手を頭の後ろか胸に添える。背筋をまっすぐ保ったままお尻を後ろに引いて上体を前に倒し、戻す。背中を丸めない。'},
+  // HIIT / 全身
+  jumpingjack:{n:'ジャンピングジャック',m:'全身',type:'time',def:20,note:'直立から、ジャンプに合わせて手足を大きく横に開き、また閉じる。リズムよく連続で。'},
+  mountain:{n:'マウンテンクライマー',m:'全身',type:'time',def:20,note:'プランクの姿勢から、片ひざを胸に引きつけ、素早く左右交互に入れ替える。その場で走るように。'},
+  burpee:{n:'バーピー',m:'全身',type:'time',def:20,note:'しゃがんで手を床につく→足を後ろに伸ばして板の姿勢→足を戻してジャンプ。繰り返す。きつければジャンプ無しでもOK。'},
+  highknee:{n:'もも上げ',m:'全身',type:'time',def:20,note:'その場で、太ももが床と平行になるまでひざを高く上げて足踏み。腕も振ってテンポよく。'},
+  squatjump:{n:'ジャンプスクワット',m:'脚',type:'time',def:20,note:'スクワットで沈んだ勢いで真上にジャンプ。着地はひざをやわらかく使って静かに。'},
+  // お尻
+  glutebridge:{n:'グルートブリッジ',m:'お尻',type:'reps',def:15,note:'あお向けで膝を立て、かかとで床を押してお尻を持ち上げる。腰を反らさず、お尻を締めてゆっくり戻す。'},
+  hipthrust:{n:'ヒップスラスト',m:'お尻',type:'reps',def:12,note:'肩甲骨の下を安定した台に預け、足裏で床を押して股関節を伸ばす。上であごを軽く引き、お尻を締める。'},
+  bulgarian:{n:'ブルガリアンスクワット',m:'お尻・脚',type:'reps',def:10,note:'後ろ足を低い台に置き、前脚へ体重を乗せて真下に沈む。前足のかかとで床を押して戻る。左右行う。'},
+  rdl:{n:'ルーマニアンデッドリフト',m:'お尻・脚',type:'reps',def:12,note:'荷物を体の近くに持ち、膝を少し緩める。背中を保ったままお尻を後ろへ引き、もも裏が伸びたら股関節を伸ばして戻る。'},
+  stepup:{n:'ステップアップ',m:'お尻・脚',type:'reps',def:12,note:'安定した低い段に片足を乗せ、その足のかかとで押して立ち上がる。反対の足で強く蹴らず、ゆっくり下りる。'},
+  sidelegraise:{n:'横向き脚上げ',m:'お尻',type:'reps',def:15,note:'横向きで体を一直線にし、上側の脚を少し後ろへ保ったまま上げる。骨盤を開かず、つま先は正面へ。'},
+  clamshell:{n:'クラムシェル',m:'お尻',type:'reps',def:15,note:'横向きで膝を曲げ、かかとを合わせたまま上の膝を開く。骨盤を後ろへ倒さず、小さな範囲でお尻の横を使う。'},
+  // 胸
+  inclinepush:{n:'台に手をつく腕立て',m:'胸・腕',type:'reps',def:12,note:'動かない丈夫な台に手をつき、頭からかかとを一直線にする。胸を台へ近づけ、台を押して戻る。'},
+  declinepush:{n:'足上げ腕立て',m:'胸・腕',type:'reps',def:8,note:'足を低い安定した台に置き、体を一直線に保って胸を床へ下ろす。通常の腕立てより肩側への負荷が高い。'},
+  floorpress:{n:'フロアプレス',m:'胸・腕',type:'reps',def:12,note:'あお向けでダンベルか水入りボトルを胸の横に持つ。上腕が床へ軽く触れるまで下ろし、真上へ押す。'},
+  chestfly:{n:'ペットボトル／ダンベルフライ',m:'胸',type:'reps',def:12,note:'あお向けで軽い重りを胸の上に持ち、肘を少し曲げたまま両腕を弧を描いて開く。胸の伸びを感じる範囲で戻す。'},
+  // 脇腹・体幹
+  deadbug:{n:'デッドバグ',m:'脇腹・体幹',type:'reps',def:10,note:'あお向けで股関節と膝を90度にし、腰を床へ保つ。反対側の手足をゆっくり伸ばし、戻して左右を替える。'},
+  birddog:{n:'バードドッグ',m:'脇腹・体幹',type:'reps',def:10,note:'四つん這いで背中を中立にし、反対側の手足を遠くへ伸ばす。骨盤を傾けず、ゆっくり戻して左右を替える。'},
+  suitcase:{n:'片手荷物保持',m:'脇腹・体幹',type:'time',def:30,note:'片手に荷物を持って直立し、体が荷物側へ傾かないよう保つ。肩をすくめず、左右同じ時間行う。'},
+  // 骨盤底：回数競争ではなく、phaseとcyclesによる専用ガイドタイマー
+  pelvic_breath:{n:'腹式呼吸による脱力',m:'骨盤底',type:'pelvic',def:40,note:'楽な姿勢で、吸う息に合わせて下腹と骨盤底がやわらかく広がるのを待つ。力を押し下げず、吐く息でも締め続けない。',cycles:4,phases:[{label:'腹式呼吸',sec:4,cue:'鼻から吸い、下腹と肋骨をやさしく広げる'},{label:'完全に緩める',sec:6,cue:'口から静かに吐き、骨盤底の力を抜いたまま休む'}]},
+  pelvic_slow:{n:'ゆっくりした収縮',m:'骨盤底',type:'pelvic',def:60,note:'息を止めずに骨盤底をやさしく引き上げ、保持した後は収縮時間より長めに完全に緩める。お尻や内ももは力ませない。',cycles:3,phases:[{label:'腹式呼吸',sec:5,cue:'吸って下腹を広げ、まず骨盤底を緩める'},{label:'やさしく締める',sec:3,cue:'吐きながら尿やガスを我慢するように軽く引き上げる'},{label:'保持',sec:5,cue:'息を続け、強く締めすぎず保つ'},{label:'完全に緩める',sec:7,cue:'吸って力をほどき、下腹もお尻も休ませる'}]},
+  pelvic_quick:{n:'短い収縮',m:'骨盤底',type:'pelvic',def:32,note:'短くやさしく締めたら、毎回しっかり緩める。速さより「収縮と脱力を分けて感じること」を優先する。',cycles:4,phases:[{label:'腹式呼吸',sec:4,cue:'肩を楽にし、下腹を広げる'},{label:'短く締める',sec:1,cue:'骨盤底だけを軽く引き上げる'},{label:'完全に緩める',sec:3,cue:'力を手放し、次の収縮を急がない'}]},
+  pelvic_release:{n:'収縮後の完全な脱力',m:'骨盤底',type:'pelvic',def:45,note:'軽い収縮の後、骨盤底が元の休んだ状態へ戻る時間を十分に取る。脱力が分からないときは収縮を弱くする。',cycles:3,phases:[{label:'やさしく締める',sec:2,cue:'吐きながらごく軽く引き上げる'},{label:'完全に緩める',sec:8,cue:'吸う息とともに骨盤底が広がるのを待つ'},{label:'腹式呼吸',sec:5,cue:'下腹の自然な上下を感じる'}]},
+  pelvic_bridge:{n:'グルートブリッジとの軽い連動',m:'骨盤底・お尻',type:'pelvic',def:56,note:'橋の動作に呼吸とごく軽い骨盤底収縮を合わせる。大殿筋と骨盤底筋は別の筋肉なので、それぞれの感覚を分ける。',cycles:4,phases:[{label:'腹式呼吸・脱力',sec:4,cue:'床で吸い、下腹と骨盤底を緩める'},{label:'持ち上げ・軽く締める',sec:4,cue:'吐きながらお尻を上げ、骨盤底はごく軽く引き上げる'},{label:'下ろして完全に緩める',sec:6,cue:'背骨をゆっくり下ろし、お尻と骨盤底の力を抜く'}]}
+};
+
+// 図鑑用の詳細情報。既存の note は短いフォーム欄としてそのまま維持する。
+function D(primary,secondary,focus,start,steps,breathing,feel,mistakes,easy,hard,muscles,icon,pain){
+  return {primary,secondary,focus,start,steps,breathing,feel,mistakes,easy,hard,muscles,icon,
+    pain:pain||'鋭い痛み、しびれ、関節の痛みが出たら中止する。負荷や可動域を下げても続く場合や、症状が強い場合は医療専門職へ相談する。'};
+}
+const EX_DETAILS={
+  pushup:D('大胸筋','上腕三頭筋・三角筋前部','胸の中央と、手のひらで床を押す感覚','手を肩幅より少し広く置き、頭からかかとを一直線にする。',
+    ['胸を手の間へ下ろす','肘は真横ではなく斜め後ろへ向ける','床を押して一直線のまま戻る'],'下ろしながら吸い、押し上げながら吐く。','胸と二の腕に張りがあり、腰や肩前面には痛みがない。','腰が落ちる／肘を真横へ開く／顔だけを床へ近づける。','台に手をつく腕立て、または膝つき腕立て。','足上げ腕立て、またはゆっくり3秒で下ろす。',{front:['chest'],assistFront:['shoulders','arms']},'💪'),
+  kneepush:D('大胸筋','上腕三頭筋・三角筋前部','胸と、膝から頭までの一本の線','膝を床につき、手を肩幅より少し広くする。',
+    ['膝から頭を一直線にする','胸を手の間へ下ろす','床を押して戻る'],'下ろして吸い、押して吐く。','胸と二の腕が働き、腰が反らない。','お尻を後ろへ引く／腰から先だけ上下する。','台に手をつく腕立て。','通常の腕立て、または停止を入れる。',{front:['chest'],assistFront:['shoulders','arms']},'🌱'),
+  squat:D('大腿四頭筋・大殿筋','ハムストリングス・内転筋・体幹','足裏全体、とくにかかと寄りとお尻','足を肩幅程度に開き、つま先と膝を同じ方向へ向ける。',
+    ['お尻を後ろへ引きながら膝を曲げる','無理のない深さまで下がる','足裏で床を押して立つ'],'下がって吸い、立ちながら吐く。','太ももとお尻が働き、膝と腰に鋭い痛みがない。','膝が内側へ入る／かかとが浮く／背中が大きく丸まる。','椅子へ座って立つボックススクワット。','ゆっくり下ろす、または荷物を胸前に持つ。',{front:['quads','core'],back:['glutes'],assistBack:['hamstrings']},'🦵'),
+  lunge:D('大殿筋・大腿四頭筋','ハムストリングス・内転筋・ふくらはぎ','前脚の足裏とお尻','前後に足を開き、骨盤を正面へ向ける。',
+    ['上体を長く保ち真下へ沈む','前膝をつま先の方向へ動かす','前足で床を押して戻る'],'沈んで吸い、戻りながら吐く。','前脚のお尻と太ももに負荷が乗る。','歩幅が狭すぎる／前膝が内へ入る／後ろ足で強く蹴る。','壁や椅子に手を添え、浅く行う。','リバースランジ、または荷物を持つ。',{front:['quads'],back:['glutes'],assistBack:['hamstrings']},'🦵'),
+  calf:D('腓腹筋・ヒラメ筋','足部の筋群','母趾球・小趾球で床を押し、ふくらはぎを縮める位置','壁の近くでまっすぐ立ち、足を平行にする。',
+    ['かかとを高く上げる','上で短く止める','ゆっくり床近くまで下ろす'],'上げながら吐き、下ろしながら吸う。','ふくらはぎが縮み、足首はまっすぐ保たれる。','反動で跳ねる／足首が外へ倒れる。','壁につかまり両脚で行う。','片脚、または段差で可動域を広げる。',{front:['calves'],back:['calves']},'🦶'),
+  crunch:D('腹直筋','腹斜筋','みぞおちを骨盤へ近づける感覚','あお向けで膝を立て、首と肩を楽にする。',
+    ['息を吐きながら肋骨を下げる','肩甲骨が少し浮くまで上体を丸める','反動なしで戻る'],'丸めながら吐き、戻りながら吸う。','みぞおち下の腹部が縮み、首は楽。','首を手で引く／勢いで起き上がる／腰まで浮かす。','手を太ももへ滑らせる小さなクランチ。','上で2秒止める。',{front:['abs'],assistFront:['obliques']},'🔥'),
+  legraise:D('腹直筋・腸腰筋','腹斜筋・大腿直筋','下腹で骨盤を安定させ、腰を床へ保つ位置','あお向けで脚を上げ、腰の隙間を小さくする。',
+    ['腰を床へ保つ','脚をゆっくり下げる','腰が反る前に戻す'],'下ろしながら吸い、戻しながら吐く。','下腹が働き、腰に圧迫感がない。','脚を下げすぎて腰が反る／反動を使う。','膝を曲げる、または片脚ずつ。','脚を伸ばし、より低い位置まで制御する。',{front:['abs','hips'],assistFront:['quads']},'🔥'),
+  bicycle:D('腹直筋・腹斜筋','腸腰筋','肋骨と反対側の骨盤を近づける位置','あお向けで肩を軽く浮かせ、股関節と膝を曲げる。',
+    ['片脚を伸ばす','胸郭を反対の膝へゆっくり回す','中央へ戻り左右交互にする'],'ひねるとき吐き、中央で吸う。','脇腹と腹部が働き、首は楽。','肘だけ動かす／速さ優先／腰が大きく反る。','足を床につけ、上体だけ交互にひねる。','伸ばす脚を床へ近づけ、ゆっくり行う。',{front:['abs','obliques'],assistFront:['hips']},'🔄'),
+  plank:D('腹横筋・腹直筋','大殿筋・肩周囲','下腹とお尻で頭からかかとの線を保つ','肘を肩の下、つま先を床に置く。',
+    ['床を肘で押す','下腹を軽く固める','自然な呼吸のまま一直線を保つ'],'息を止めず、小さく自然に吸って吐く。','腹部全体と肩周りが働き、腰に痛みがない。','腰が落ちる／お尻が高すぎる／息を止める。','膝を床につく、または台に肘を置く。','足幅を狭くする、または長いレバーで行う。',{front:['abs','shoulders'],back:['glutes']},'🧱'),
+  sideplank:D('腹斜筋・腹横筋','中殿筋・肩周囲','床側の脇腹と、体の側面の一直線','横向きで肘を肩の真下へ置き、脚をそろえる。',
+    ['肘で床を押す','骨盤を持ち上げる','胸と骨盤を正面へ向けて保つ'],'息を止めず、脇腹へも息を入れる。','床側の脇腹とお尻の横が働く。','肩がすくむ／骨盤が後ろへ倒れる／腰が落ちる。','膝を曲げて膝と肘で支える。','上脚を持ち上げる。',{front:['obliques','shoulders'],back:['glutes']},'↔️'),
+  pike:D('三角筋前部','上腕三頭筋・僧帽筋上部・大胸筋上部','肩で床を押し、頭を手の間へ下ろす位置','手を床につき、お尻を高くして体を逆V字にする。',
+    ['かかと側へ体重を保つ','肘を斜め後ろへ曲げ頭を床へ近づける','手で床を押して戻る'],'下ろして吸い、押して吐く。','肩の前と二の腕が働く。','通常の腕立てのように胸を前へ下ろす／腰が反る。','手を台に置く、または可動域を小さくする。','足を台に乗せる。',{front:['shoulders','arms'],assistFront:['chest']},'🔺'),
+  dips:D('上腕三頭筋','大胸筋下部・三角筋前部','二の腕で台を押す位置','動かない丈夫な台に手を置き、胸を開く。',
+    ['肘を後ろへ曲げる','肩が前へ出ない深さで止める','手で台を押して戻る'],'下ろして吸い、押して吐く。','二の腕が働き、肩前面は快適。','深く下ろしすぎる／肩をすくめる／台が動く。','膝を曲げ、可動域を小さくする。','脚を伸ばす。',{front:['arms','chest'],assistFront:['shoulders']},'🪑','肩前面に詰まりや痛みが出やすい種目。痛みがあれば深さを減らすか、別の上腕三頭筋種目へ変更する。'),
+  superman:D('脊柱起立筋','大殿筋・ハムストリングス・肩後部','背中を長く保ちながら手足を遠くへ伸ばす','うつ伏せで手足を長く伸ばし、首を中立にする。',
+    ['下腹を軽く支える','手足を遠くへ伸ばしながら少し浮かす','反動なしで下ろす'],'上げながら吐き、下ろして吸う。','背中とお尻に穏やかな収縮がある。','高く反りすぎる／首を上げる／反動を使う。','片手片脚を交互に上げる。','上で数秒止める。',{back:['back','glutes'],assistBack:['hamstrings','shoulders']},'🦸'),
+  goodmorning:D('ハムストリングス・大殿筋','脊柱起立筋・内転筋','股関節の折れ目と、もも裏の伸び','足を腰幅、膝を少し緩め、背中を中立にする。',
+    ['お尻を後ろへ引く','背中を保ち上体を前傾する','足裏で床を押し股関節を伸ばす'],'倒しながら吸い、戻りながら吐く。','もも裏が伸び、お尻で立ち上がる。','背中を丸める／しゃがむ／首を反らす。','壁へお尻をタッチする練習。','軽い荷物を胸前に持つ。',{back:['glutes','hamstrings','back']},'🙇'),
+  jumpingjack:D('下肢筋群・三角筋','ふくらはぎ・体幹','足音を小さくし、手足を同時に開閉する','直立して膝を軽く緩める。',
+    ['軽く跳んで足を開く','同時に腕を頭上へ上げる','柔らかく着地して閉じる'],'一定のリズムで息を止めない。','全身が温まり、着地を制御できる。','膝が内へ入る／硬い着地／肩に痛い範囲まで腕を上げる。','跳ばずに左右へステップする。','テンポを上げる。',{front:['shoulders','quads','calves'],back:['glutes','calves']},'⭐'),
+  mountain:D('腹直筋・腸腰筋','肩周囲・大腿四頭筋・大殿筋','手で床を押し、骨盤を安定させたまま膝を運ぶ','手を肩の下に置き、プランクになる。',
+    ['片膝を胸へ引く','腰の高さを保つ','左右を滑らかに替える'],'一定の呼吸を続け、息を止めない。','腹部と股関節が働き、肩で床を押せる。','お尻が跳ねる／腰が反る／速さでフォームが崩れる。','台に手を置き、ゆっくり歩く。','速度を上げても骨盤を保つ。',{front:['abs','hips','shoulders','quads'],back:['glutes']},'🏃'),
+  burpee:D('大腿四頭筋・大殿筋・胸','肩・上腕三頭筋・体幹・ふくらはぎ','着地の柔らかさと、板姿勢での体幹','立位から足を腰幅にする。',
+    ['しゃがんで手を床へ置く','足を後ろへ出し板姿勢になる','足を戻して立つか軽く跳ぶ'],'動きに合わせて吐き、止めない。','全身が働き、各姿勢を制御できる。','腰が落ちる／着地が硬い／疲れても速度を維持する。','足を片脚ずつ後ろへ出し、ジャンプなし。','腕立てを加える。',{front:['chest','shoulders','arms','abs','quads'],back:['glutes','calves']},'⚡'),
+  highknee:D('腸腰筋・大腿四頭筋','大殿筋・ふくらはぎ・体幹','背を高くし、足元へ静かに着地する','直立し、腕を軽く曲げる。',
+    ['片膝を無理のない高さへ上げる','反対の腕を振る','左右をリズムよく替える'],'リズムに合わせ、短く吐き続ける。','股関節と脚が働き、上体が安定する。','後ろへ反る／足音が大きい／膝の高さだけを競う。','速歩きのその場足踏み。','テンポを上げる。',{front:['hips','quads','abs'],back:['glutes','calves']},'🏃'),
+  squatjump:D('大腿四頭筋・大殿筋','ハムストリングス・ふくらはぎ・体幹','静かな着地と膝・つま先の向き','足を肩幅に開き、膝を軽く緩める。',
+    ['浅くスクワットする','足裏で床を押して真上へ跳ぶ','膝と股関節を曲げ静かに着地する'],'跳ぶとき吐き、着地後に吸う。','脚とお尻が働き、着地を制御できる。','膝が内へ入る／硬い着地／疲労時も続ける。','通常のスクワット。','高さではなく着地品質を保って連続する。',{front:['quads','calves'],back:['glutes','hamstrings','calves']},'🚀'),
+  glutebridge:D('大殿筋','ハムストリングス・腹筋群','左右のお尻と、肋骨を反らさない位置','あお向けで膝を立て、足を腰幅に置く。',
+    ['かかとで床を押す','お尻を締めて骨盤を持ち上げる','腰を反らずゆっくり下ろす'],'上げながら吐き、下ろしながら吸う。','お尻中央が縮み、腰やもも裏だけに偏らない。','腰を反る／足が遠すぎる／膝が開閉する。','可動域を小さくする。','片脚ブリッジ、または上で停止する。',{back:['glutes'],assistBack:['hamstrings'],assistFront:['abs']},'🍑'),
+  hipthrust:D('大殿筋','ハムストリングス・内転筋・体幹','上でお尻を締め、あごと肋骨を軽く引く位置','肩甲骨下を動かない台に当て、足を腰幅に置く。',
+    ['骨盤を下げる','足裏で床を押し股関節を伸ばす','すねがほぼ垂直の位置でお尻を締める'],'持ち上げながら吐き、下ろして吸う。','お尻が強く縮み、腰は反らない。','頭を後ろへ倒す／腰を反る／足位置が遠すぎる。','床のグルートブリッジ。','上で停止、または安全に扱える軽い荷物を骨盤上へ置く。',{back:['glutes'],assistBack:['hamstrings'],assistFront:['abs']},'🍑'),
+  bulgarian:D('大殿筋・大腿四頭筋','ハムストリングス・内転筋・中殿筋','前脚のかかととお尻','後ろ足を低い安定した台へ置き、前足を十分前へ出す。',
+    ['前脚へ体重を乗せる','上体を少し前傾し真下へ沈む','前足で床を押して戻る'],'沈んで吸い、立ちながら吐く。','前脚のお尻と太ももが働く。','台が高すぎる／前膝が内へ入る／後ろ足で蹴る。','通常のスプリットスクワット、壁に手を添える。','軽い荷物を持つ。',{front:['quads'],back:['glutes'],assistBack:['hamstrings']},'🍑'),
+  rdl:D('ハムストリングス・大殿筋','脊柱起立筋・内転筋・前腕','お尻を後ろへ引き、もも裏を伸ばす位置','足を腰幅、荷物を太ももの前で持ち、膝を少し緩める。',
+    ['荷物を脚の近くへ保つ','背中を中立にしてお尻を後ろへ引く','もも裏が伸びたら床を押して立つ'],'下ろして吸い、立ちながら吐く。','もも裏の伸びとお尻の収縮を感じる。','背中を丸める／荷物が体から離れる／スクワットになる。','荷物なしで壁タッチ。','扱える範囲で荷物を増やす、または片脚で補助を使う。',{back:['glutes','hamstrings','back'],assistFront:['arms']},'🏋️'),
+  stepup:D('大殿筋・大腿四頭筋','ハムストリングス・中殿筋・ふくらはぎ','台の上の足裏全体','滑らず動かない低い段へ片足を全面乗せる。',
+    ['台上のかかとで押す','反対脚で強く蹴らず立つ','同じ足で制御して下りる'],'上がりながら吐き、下りながら吸う。','台上の脚のお尻と太ももが働く。','台が高すぎる／後ろ足で跳ぶ／膝が内へ入る。','低い段、または手すりを使う。','少し高い段、または軽い荷物を持つ。',{front:['quads'],back:['glutes'],assistBack:['hamstrings','calves']},'🪜'),
+  sidelegraise:D('中殿筋・小殿筋','大腿筋膜張筋・体幹','上側のお尻の横','横向きで下の膝を曲げ、上脚を体と一直線にする。',
+    ['骨盤を重ねる','かかとを遠くへ伸ばして脚を上げる','骨盤が動く前に止めて下ろす'],'上げながら吐き、下ろして吸う。','お尻の横が熱くなり、股関節前だけに偏らない。','つま先が天井を向く／脚が前へ出る／骨盤が開く。','上げ幅を小さくする。','上で停止、または軽いバンドを使う。',{back:['glutes'],assistFront:['hips']},'↗️'),
+  clamshell:D('中殿筋・小殿筋','深層外旋筋','骨盤を固定し、お尻の横で膝を開く位置','横向きで股関節と膝を曲げ、かかとを合わせる。',
+    ['骨盤を前後に重ねる','かかとを合わせたまま上の膝を開く','骨盤が倒れる前に戻す'],'開きながら吐き、戻して吸う。','お尻の横から後ろが働く。','骨盤ごと後ろへ倒れる／足が離れる／開きすぎる。','可動域を小さくする。','膝上に軽いバンドを使う。',{back:['glutes'],assistFront:['hips']},'🐚'),
+  inclinepush:D('大胸筋','上腕三頭筋・三角筋前部','胸を台へ近づけ、全身を一直線にする','壁や動かない丈夫な台に手を肩幅より少し広く置く。',
+    ['かかとから頭まで一直線にする','胸を台へ近づける','台を押して戻る'],'下ろして吸い、押して吐く。','胸と二の腕が働き、肩がすくまない。','腰が台へ先に近づく／台が滑る／肘を真横へ開く。','壁腕立て。','台を低くし、通常の腕立てへ近づける。',{front:['chest'],assistFront:['shoulders','arms']},'📐'),
+  declinepush:D('大胸筋上部・三角筋前部','上腕三頭筋・体幹','肩から胸上部と、一直線の体幹','足を低い安定した台へ置き、手を肩幅より少し広くする。',
+    ['床を押して体を一直線にする','胸を手の間へ下ろす','腰を反らず押し戻す'],'下ろして吸い、押して吐く。','胸上部と肩前部、二の腕が働く。','台が高すぎる／腰が落ちる／肩の痛みを我慢する。','通常の腕立て。','台を少し高くするが、フォームを優先する。',{front:['chest','shoulders'],assistFront:['arms','abs']},'📐','肩や手首に痛みが出たら中止し、通常または台に手をつく腕立てへ戻す。'),
+  floorpress:D('大胸筋・上腕三頭筋','三角筋前部・前腕','胸の横から真上へ押す軌道','あお向けで膝を立て、軽い重りを胸の横に持つ。',
+    ['肩甲骨を床へ安定させる','上腕が床へ軽く触れるまで下ろす','手首を立てて真上へ押す'],'下ろして吸い、押して吐く。','胸と二の腕が働き、肩前面は楽。','重りを顔側へ押す／手首が反る／床へ肘を打ちつける。','重りなしで動きを練習する。','片腕ずつ、または扱える範囲で重くする。',{front:['chest','arms'],assistFront:['shoulders']},'🏋️'),
+  chestfly:D('大胸筋','三角筋前部・上腕二頭筋','胸を横へ広げてから中央へ寄せる位置','あお向けで軽い重りを胸の上に持ち、肘を少し曲げる。',
+    ['肘の角度を保つ','腕を弧を描いて左右へ開く','胸で抱き込むように戻す'],'開いて吸い、戻して吐く。','胸が穏やかに伸び、中央へ寄せると収縮する。','重すぎる／肘を深く下ろす／手首が曲がる。','重りなし、または非常に軽いボトル。','下ろす時間を3秒にする。',{front:['chest'],assistFront:['shoulders','arms']},'🪽','肩前面に痛みや不安定感が出たら中止し、可動域と重さを下げる。'),
+  deadbug:D('腹横筋・腹直筋','腹斜筋・腸腰筋','腰を床へ保ちながら手足を遠くへ伸ばす位置','あお向けで腕を上げ、股関節と膝を90度にする。',
+    ['息を吐いて肋骨を下げる','反対の手足をゆっくり伸ばす','腰が反る前に戻し左右を替える'],'伸ばしながら長く吐き、戻して吸う。','腹部全体が働き、腰は床に安定する。','手足を下げすぎる／腰が浮く／速く動く。','脚だけ、またはかかとを床へ軽く触れる。','手足をより低く遠くへ伸ばす。',{front:['abs','obliques','hips']},'🐞'),
+  birddog:D('腹横筋・多裂筋','大殿筋・肩周囲','骨盤と胸を床へ平行に保つ位置','手を肩下、膝を股関節下に置く。',
+    ['床を手と膝で押す','反対の手足を遠くへ伸ばす','骨盤を動かさず戻し左右を替える'],'伸ばしながら吐き、戻して吸う。','腹部、背中、お尻が協調して働く。','脚を高く上げ腰を反る／骨盤が開く／肩がすくむ。','腕だけ、脚だけで行う。','肘と膝を体の下で近づけてから伸ばす。',{front:['abs','shoulders'],back:['back','glutes']},'🐕'),
+  suitcase:D('腹斜筋・腰方形筋','握力・中殿筋・脊柱起立筋','荷物と反対側の脇腹で直立を保つ','片手に安全に持てる荷物を持ち、足を腰幅にする。',
+    ['肩をすくめず腕を下ろす','左右へ傾かず背を高くする','時間後に持ち替える'],'自然な呼吸を続け、息を止めない。','荷物と反対側の脇腹と握力が働く。','荷物側へ傾く／肩をすくめる／重すぎる荷物。','軽い荷物、短い時間。','その場歩き、または少し重くする。',{front:['obliques','arms'],back:['back','glutes']},'🧳'),
+  pelvic_breath:D('骨盤底筋の脱力・横隔膜','深層腹筋・肋間筋','坐骨の間と下腹が吸う息でやわらかく広がる位置','あお向けで膝を立てるか、支えのある楽な座位になる。',
+    ['片手を下腹へ置く','鼻から吸い下腹をやさしく広げる','吐いても締め込まず休ませる'],'吸う4秒、吐いて緩める6秒。力んで深く吸わない。','下腹と骨盤底がやわらかく動き、お尻や内ももは休んでいる。','下へ強く押す／胸だけで呼吸する／吐くたび強く締める。','秒数を気にせず自然呼吸だけ行う。','立位や日常姿勢でも同じ脱力を探す。',{front:['pelvic','abs'],assistFront:['diaphragm']},'🌬️','骨盤痛、排尿・排便の症状、術後などがある場合は自己判断で強く収縮せず、医療専門職へ相談する。'),
+  pelvic_slow:D('骨盤底筋','横隔膜・深層腹筋','尿道・肛門の周囲を内側上方へ軽く引き上げる位置','楽な姿勢で腹式呼吸し、まず完全に緩める。',
+    ['吐きながら2〜3割の力で締める','呼吸を続けて保持する','吸いながら時間をかけて完全に緩める'],'締める時も保持中も息を止めず、脱力時に腹式呼吸する。','骨盤底だけの穏やかな引き上げと、その後の明確な脱力。','全力で締める／お尻や腹を固める／緩める時間を省く。','保持を1〜2秒に短くする。','姿勢を変えるが、収縮を強くしすぎない。',{front:['pelvic'],assistFront:['abs','diaphragm']},'〰️','痛み、圧迫感、排尿しづらさが出たら中止する。締める練習が合わない場合もあるため専門職へ相談する。'),
+  pelvic_quick:D('骨盤底筋','深層腹筋','短い引き上げと、その都度の完全な脱力','楽な姿勢で腹式呼吸し、骨盤底を休ませる。',
+    ['ごく短く軽く締める','すぐ力を手放す','脱力を確認して次へ進む'],'息を止めない。数回ごとに腹式呼吸で完全に休む。','収縮と脱力が別々に分かり、他の筋肉は静か。','速さを競う／締めっぱなし／お尻を動かす。','収縮回数を減らし脱力を長くする。','日常姿勢で行うが、正確さを保つ。',{front:['pelvic'],assistFront:['abs','diaphragm']},'✨','痛みや骨盤内の重さが出たら中止し、脱力だけに切り替える。症状が続けば医療専門職へ相談する。'),
+  pelvic_release:D('骨盤底筋の随意的な脱力','横隔膜・深層腹筋','収縮後に坐骨の間が元の柔らかさへ戻る位置','楽な姿勢で肩、あご、お腹、お尻を緩める。',
+    ['ごく軽く短く収縮して位置を確認する','吸う息で力をほどく','収縮より長く休み、完全な脱力を待つ'],'吸う息で下腹と骨盤底を広げ、吐く息は自然に任せる。','締めた後の「戻る・ほどける」差が分かる。','強く収縮する／下へ押し込む／脱力前に次へ進む。','収縮を省き腹式呼吸だけ行う。','座位や立位でも脱力を探す。',{front:['pelvic'],assistFront:['diaphragm','abs']},'🫧','痛みや違和感が増える場合は中止する。脱力しにくさや症状が続く場合は骨盤底に詳しい専門職へ相談する。'),
+  pelvic_bridge:D('大殿筋・骨盤底筋（別々の筋肉）','ハムストリングス・深層腹筋','お尻で持ち上げ、骨盤底は軽く連動して完全に緩める位置','あお向けで膝を立て、足を腰幅に置いて腹式呼吸する。',
+    ['床で吸い骨盤底を緩める','吐きながらお尻で持ち上げ骨盤底は軽く締める','下ろしたら両方を完全に緩める'],'上げながら吐き、下で吸って脱力する。','お尻の収縮と骨盤底の軽い引き上げを区別できる。','お尻を締めることを骨盤底収縮と思う／腰を反る／下で緩めない。','骨盤を上げず呼吸と軽い収縮だけ。','通常のブリッジ回数を増やすのではなく、連動の正確さを高める。',{front:['pelvic','abs'],back:['glutes'],assistBack:['hamstrings']},'🌉','腰や骨盤に痛み、圧迫感が出たら中止する。大殿筋と骨盤底筋を同一視して強く締め続けない。')
+};
+Object.keys(EX).forEach(k=>Object.assign(EX[k],EX_DETAILS[k]||D(EX[k].m,'体幹',EX[k].m,EX[k].note,[EX[k].note],'息を止めずに行う。','対象部位に無理のない張りを感じる。','反動や痛みを我慢して続ける。','回数・時間・可動域を減らす。','ゆっくり行う。',{front:[],back:[]},'🏋️')));
+
+const BODYPARTS={
+  '胸':['pushup','kneepush','pike','dips','inclinepush','declinepush','floorpress','chestfly'],
+  '腹':['crunch','legraise','bicycle','plank'],
+  '脚':['squat','lunge','calf','squatjump'],
+  '背中':['superman','goodmorning'],
+  '腕':['pushup','dips','pike'],
+  '肩':['pike','jumpingjack'],
+  '全身':['jumpingjack','mountain','burpee','highknee'],
+  'お尻':['glutebridge','hipthrust','bulgarian','rdl','stepup','sidelegraise','clamshell'],
+  '脇腹・体幹':['sideplank','deadbug','birddog','suitcase','mountain'],
+  '骨盤底':['pelvic_breath','pelvic_slow','pelvic_quick','pelvic_release','pelvic_bridge']
+};
+const HIIT_POOL=['jumpingjack','mountain','burpee','highknee','squatjump'];
+const DAILY_POOL=Object.keys(EX);
+const FREE_POOL=['pushup','kneepush','squat','lunge','calf','crunch','legraise','bicycle','plank','sideplank','pike','dips','superman',
+  'glutebridge','hipthrust','bulgarian','rdl','stepup','sidelegraise','clamshell','inclinepush','declinepush','floorpress','chestfly',
+  'deadbug','birddog','suitcase','pelvic_breath','pelvic_slow','pelvic_quick','pelvic_release','pelvic_bridge'];
+const GUIDE_CATEGORIES={
+  'お尻':['glutebridge','hipthrust','bulgarian','rdl','stepup','sidelegraise','clamshell'],
+  '胸':['pushup','kneepush','inclinepush','declinepush','floorpress','chestfly'],
+  '脇腹・体幹':['sideplank','deadbug','birddog','suitcase','mountain'],
+  '骨盤底':['pelvic_breath','pelvic_slow','pelvic_quick','pelvic_release','pelvic_bridge'],
+  '全種目':Object.keys(EX)
+};
+
+/* ============ 豆知識DB（検証済みの一般的な運動生理学・栄養学。医療助言はしない） ============ */
+// fact=中立の事実 / say=3人の口調に翻訳。表示はsayを使う
+const TIPS=[
+ // --- 栄養 ---
+ {id:'protein_amount',c:'栄養',fact:'たんぱく質は筋肉の材料。運動する人は1日に体重1kgあたり約1.4〜2.0gが目安',
+  say:{cat:'たんぱく質は筋肉の材料だ。運動するなら体重1kgあたり1.4から2グラム、しっかり摂れ。',dog:'たんぱく質は筋肉のもとなんだ。運動する人は体重1kgあたり1.4〜2gが目安だよ！',bear:'筋肉の材料はたんぱく質だぜ相棒！体重1kgにつき1.4から2グラム、狙っていこうや！'}},
+ {id:'protein_split',c:'栄養',fact:'たんぱく質は一度に大量に摂るより、毎食に分けたほうが効率的',
+  say:{cat:'一度にドカ食いしても使い切れない。朝昼晩、分けて摂れ。',dog:'たんぱく質はまとめてじゃなくて、毎食ちょっとずつが効率いいんだよ！',bear:'肉の一気食いはもったいねェ！朝昼晩に分けて食うのが賢いぜ！'}},
+ {id:'protein_timing',c:'栄養',fact:'運動直後の短い時間だけが勝負ではなく、1日の合計摂取量のほうが重要',
+  say:{cat:'運動後30分に慌てる必要はない。大事なのは1日の合計だ。',dog:'「運動後すぐじゃなきゃ！」って焦らなくて大丈夫。1日トータルが大事だよ！',bear:'ゴールデンタイムに躍起になるなァ！要は一日全体で足りてりゃいいのさ！'}},
+ {id:'carbs',c:'栄養',fact:'炭水化物は運動のエネルギー源。抜きすぎると力が出ず筋肉も分解されやすい',
+  say:{cat:'炭水化物はエネルギーだ。抜きすぎると力が出ん。ちゃんと食え。',dog:'炭水化物は動く力のもとだよ！抜きすぎると元気が出ないんだ。',bear:'米やパンはガソリンだぜ！抜きすぎると力が出ねェぞ、しっかり食え！'}},
+ {id:'water',c:'栄養',fact:'運動中は喉が渇く前にこまめに水分を。尿の色が薄い黄色なら水分は足りている目安',
+  say:{cat:'喉が渇く前に飲め。尿が濃いなら水分不足のサインだ。',dog:'喉がかわく前にこまめにお水をね！おしっこが薄い黄色なら足りてる証拠だよ。',bear:'渇く前に飲むのがコツだぜ！小便が濃かったら水分足りてねェ合図だ！'}},
+ {id:'breakfast',c:'栄養',fact:'朝は特にたんぱく質が不足しがち。卵・納豆・ヨーグルトなどで補うと良い',
+  say:{cat:'朝はたんぱく質が抜けやすい。卵か納豆でも足しておけ。',dog:'朝ごはんはたんぱく質が不足しがち。卵や納豆、ヨーグルトがおすすめだよ！',bear:'朝はたんぱく質が足りねェもんだ！卵に納豆、ガッと足していこうぜ！'}},
+ {id:'post_meal',c:'栄養',fact:'運動後はたんぱく質と炭水化物を一緒に摂ると回復に役立つ',
+  say:{cat:'運動後はたんぱく質と炭水化物を一緒に摂れ。回復が早い。',dog:'運動のあとはたんぱく質と炭水化物を一緒に摂ると回復にいいんだ！',bear:'鍛えた後は肉と米をセットでいけ！回復がぜんぜん違うぜ！'}},
+ {id:'veggies',c:'栄養',fact:'野菜や果物のビタミン・食物繊維も体づくりの土台。たんぱく質だけでは偏る',
+  say:{cat:'たんぱく質ばかりでは偏る。野菜も食え。土台が要る。',dog:'お肉だけじゃなくて、野菜や果物も体づくりの土台なんだよ！',bear:'肉ばっかじゃダメだぜ相棒！野菜もモリモリ食って土台を作れ！'}},
+ {id:'undereat',c:'栄養',fact:'極端に食べないと筋肉は増えない。減量中でもたんぱく質はしっかり摂る',
+  say:{cat:'食わなければ筋肉は増えん。絞る時もたんぱく質だけは死守しろ。',dog:'極端に食べないと筋肉は増えないよ。ダイエット中もたんぱく質はしっかりね！',bear:'食わなきゃ筋肉はつかねェ！減量中でもたんぱく質だけは譲るな！'}},
+ // --- 回復 ---
+ {id:'sleep',c:'回復',fact:'睡眠中に筋肉は修復・成長する。大人は7〜9時間が目安',
+  say:{cat:'筋肉は寝ている間に育つ。7時間は寝ろ。',dog:'筋肉は寝てる間に育つんだよ！大人は7〜9時間の睡眠が目安だよ。',bear:'筋肉は寝てる間にデカくなるんだぜ！7時間から9時間、しっかり寝ろ！'}},
+ {id:'rest_day',c:'回復',fact:'同じ部位は48時間ほど空けると回復して強くなる（超回復）',
+  say:{cat:'同じ部位は2日空けろ。休ませてこそ強くなる。',dog:'同じところは48時間くらい休ませると、回復して強くなるんだ！',bear:'同じ筋肉は二日空けろ！休ませてこそデカくなるんだぜ、これが超回復だ！'}},
+ {id:'doms_when',c:'回復',fact:'筋肉痛は運動の1〜3日後に出て、数日で引くのが普通',
+  say:{cat:'筋肉痛は1〜3日後に来る。数日で引く。慌てるな。',dog:'筋肉痛は運動の1〜3日後に出て、数日で引くのが普通だよ。心配ないよ！',bear:'筋肉痛は一日二日後に来て、数日で消えるもんだ！焦んなよ相棒！'}},
+ {id:'doms_notneed',c:'誤解',fact:'筋肉痛が無くても効果はある。「痛くないと意味がない」は誤り',
+  say:{cat:'筋肉痛が無くても効いている。「痛くないと無意味」は迷信だ。',dog:'筋肉痛が無くてもちゃんと効いてるよ！「痛くないと意味ない」は間違いなんだ。',bear:'筋肉痛が無くても効果はあるぜ！「痛くなきゃ意味ねェ」なんて嘘っぱちだ！'}},
+ {id:'stretch',c:'回復',fact:'運動後の軽いストレッチは体をクールダウンさせ気持ちよい',
+  say:{cat:'終わったら軽く伸ばせ。クールダウンだ。',dog:'運動のあとは軽くストレッチすると、気持ちよくクールダウンできるよ！',bear:'締めに軽く伸ばしとけ相棒！スッと落ち着くぜ！'}},
+ {id:'warmup',c:'安全',fact:'いきなり全力はケガのもと。体を温めてから始める',
+  say:{cat:'いきなり全力はケガの元だ。体を温めてから始めろ。',dog:'いきなり全力はケガのもとだよ。軽く体を温めてから始めようね！',bear:'ぶっつけ全力はケガのもとだぜ！まず体を温めてからいこう！'}},
+ {id:'active_rec',c:'回復',fact:'疲れた日は軽く歩くなど、動く休養（アクティブレスト）も回復を助ける',
+  say:{cat:'疲れた日は軽く歩け。動く休養も回復になる。',dog:'疲れた日は軽くお散歩とかね！動く休養も回復に役立つんだよ。',bear:'ダルい日は軽く歩くのもアリだぜ！動く休養ってやつだ！'}},
+ {id:'consistency',c:'回復',fact:'週に一度の猛練習より、少しでも継続するほうが効果的',
+  say:{cat:'たまの猛練習より、細く長く続けるほうが効く。',dog:'週イチの頑張りすぎより、少しずつでも続けるほうが効果的だよ！',bear:'たまに死ぬ気でやるより、コツコツ続けるほうが強くなるぜ相棒！'}},
+ // --- フォーム ---
+ {id:'f_pushup',c:'フォーム',fact:'腕立ては手を肩の真下、体を一直線に保ち、胸を床すれすれまで下ろす',
+  say:{cat:'腕立ては手を肩の真下。体は一直線。胸を床まで下ろせ。',dog:'腕立ては手を肩の真下について、体は一直線に！胸を床すれすれまでね。',bear:'腕立ては手を肩の下、体は板みてェに真っ直ぐ！胸を床までいけ！'}},
+ {id:'f_squat',c:'フォーム',fact:'スクワットは膝とつま先を同じ向きに、太ももが床と平行まで下げる',
+  say:{cat:'スクワットは膝とつま先を同じ向きに。太ももが床と平行までだ。',dog:'スクワットは膝とつま先を同じ向きに！太ももが床と平行になるまで下げよう。',bear:'スクワットは膝とつま先を揃えろ！太ももが地面と平行までズドンといけ！'}},
+ {id:'f_plank',c:'フォーム',fact:'プランクは腰を反らさず、頭からかかとまで一直線をキープ',
+  say:{cat:'プランクは腰を反らすな。頭からかかとまで一直線を保て。',dog:'プランクは腰を反らさないで、頭からかかとまで一直線をキープだよ！',bear:'プランクは腰を落とすなよ！頭からかかとまで一本の棒になれ！'}},
+ {id:'f_crunch',c:'フォーム',fact:'腹筋は勢いで起こさず、おへそを覗き込むように背中を丸める',
+  say:{cat:'腹筋は反動を使うな。おへそを覗き込むように丸めろ。',dog:'腹筋は勢いじゃなくて、おへそを覗き込むように背中を丸めるといいよ！',bear:'腹筋は反動使うな相棒！へそを見るみたいに背中を丸めるんだ！'}},
+ {id:'f_breathe',c:'安全',fact:'力を入れるときに息を吐く。息を止めると血圧が上がって危険',
+  say:{cat:'力むときに息を吐け。止めると血圧が上がる。危険だ。',dog:'力を入れるときに息を吐こうね！息を止めると危ないんだ。',bear:'踏ん張るときに息を吐け！止めると血圧が上がって危ねェぞ！'}},
+ {id:'f_tempo',c:'フォーム',fact:'反動を使わずゆっくり動かすほうが筋肉に効く',
+  say:{cat:'反動に頼るな。ゆっくり動かすほうが効く。',dog:'反動を使わずゆっくり動かすと、筋肉によく効くんだよ！',bear:'勢い任せはもったいねェ！ゆっくり効かせるのが通ってもんだ！'}},
+ {id:'f_rom',c:'フォーム',fact:'中途半端に動かすより、無理のない範囲で大きく動かすと効果的',
+  say:{cat:'半端に動かすな。無理のない範囲で大きく動かせ。',dog:'ちょこっとより、無理のない範囲で大きく動かすほうが効果的だよ！',bear:'チマチマやるより、無理ねェ範囲でデカく動かせ相棒！'}},
+ {id:'f_core',c:'フォーム',fact:'どの種目もお腹に軽く力を入れると体が安定してケガしにくい',
+  say:{cat:'腹に軽く力を入れろ。体が安定してケガしにくい。',dog:'どの種目もお腹に軽く力を入れると、体が安定してケガしにくいよ！',bear:'腹に力入れときゃ体が安定すんぜ！ケガ予防にもなるんだ！'}},
+ // --- 誤解の訂正 ---
+ {id:'m_spot',c:'誤解',fact:'腹筋だけしてもお腹の脂肪は部分的には落ちない。全身運動＋食事が必要',
+  say:{cat:'腹筋だけで腹の脂肪は落ちん。全身運動と食事が要る。',dog:'腹筋だけじゃお腹の脂肪は部分的には落ちないんだ。全身運動と食事が大事だよ！',bear:'腹筋だけで腹は割れねェ！全身動かして飯も見直すのが近道だぜ！'}},
+ {id:'m_fat',c:'誤解',fact:'筋肉が脂肪に変わることはない。筋肉と脂肪は別々の組織',
+  say:{cat:'筋肉が脂肪に変わることはない。別の組織だ。',dog:'筋肉が脂肪に変わることはないよ！もともと別の組織なんだ。',bear:'筋肉が脂肪になるなんて有り得ねェ！そもそも別モンだぜ！'}},
+ {id:'m_bulk',c:'誤解',fact:'少し鍛えたくらいで簡単にムキムキにはならない。まず引き締まる',
+  say:{cat:'少し鍛えた程度でムキムキにはならん。まず引き締まるだけだ。',dog:'ちょっと鍛えたくらいでムキムキにはならないよ。まずは引き締まるんだ！',bear:'少々やったくらいでゴリマッチョにはならねェ！まずは引き締まるのさ！'}},
+ {id:'m_sweat',c:'誤解',fact:'汗をかいた量＝脂肪が燃えた量ではない。汗は主に水分',
+  say:{cat:'汗の量は脂肪燃焼の量ではない。ただの水分だ。',dog:'汗をたくさんかいた＝脂肪が燃えた、じゃないんだ。汗は主に水分だよ！',bear:'汗の量と脂肪燃焼は別物だぜ！汗はほとんど水分だからな！'}},
+ {id:'m_more',c:'誤解',fact:'やればやるほど良いわけではない。回復があって初めて成長する',
+  say:{cat:'やり過ぎは逆効果だ。回復があって成長する。',dog:'たくさんやればいいってものじゃないよ。回復してこそ成長するんだ！',bear:'やりゃいいってもんじゃねェ！休んで初めてデカくなるんだぜ！'}},
+ // --- 安全・メンタル ---
+ {id:'s_pain',c:'安全',fact:'鋭い痛みや違和感を感じたらすぐ中止する。無理は禁物',
+  say:{cat:'鋭い痛みを感じたら即中止だ。そこは頑張るところじゃない。',dog:'鋭い痛みや違和感があったら、すぐやめてね。無理は禁物だよ。',bear:'ズキッと来たらすぐやめろ相棒！そこは根性出すとこじゃねェ！'}},
+ {id:'s_start',c:'安全',fact:'最初から追い込みすぎず、まずは正しいフォームを覚える',
+  say:{cat:'最初から追い込むな。まずフォームを覚えろ。',dog:'いきなり追い込まなくて大丈夫。まずは正しいフォームを覚えようね！',bear:'初っ端から飛ばすな！まずは型を体に叩き込め！'}},
+ {id:'s_timing',c:'安全',fact:'空腹すぎても満腹すぎても動きにくい。軽く食べて1〜2時間後が目安',
+  say:{cat:'腹が減りすぎても膨れすぎても動けん。食後1〜2時間が目安だ。',dog:'ペコペコでも満腹でも動きにくいよ。軽く食べて1〜2時間後がいい感じ！',bear:'腹ペコも満腹も動きづれェ！飯から一、二時間空けるのがちょうどいいぜ！'}},
+ {id:'s_air',c:'安全',fact:'暑い日や締め切った部屋は熱がこもる。換気と水分を忘れずに',
+  say:{cat:'締め切った部屋は熱がこもる。換気と水分を忘れるな。',dog:'暑い日や締め切った部屋は熱がこもるよ。換気とお水を忘れずにね！',bear:'ムシムシした部屋は危ねェ！窓開けて水も飲め相棒！'}},
+ {id:'s_mood',c:'メンタル',fact:'運動は気分をリフレッシュし、ストレス解消にも役立つ',
+  say:{cat:'体を動かせば気も晴れる。……悪くないだろ。',dog:'運動すると気分がスッキリするよね！ストレス解消にもなるんだ。',bear:'汗かきゃ気分も晴れるぜ！ストレスなんて吹き飛ばせ！'}},
+ {id:'s_compare',c:'メンタル',fact:'比べる相手は他人ではなく過去の自分。少しの前進で十分',
+  say:{cat:'他人と比べるな。昨日の自分を超えれば上等だ。',dog:'比べるのは他人じゃなくて、過去のキミ自身だよ。少しの前進で十分！',bear:'他人と比べんな相棒！昨日の自分に一歩勝てりゃ上出来だぜ！'}},
+ {id:'s_overload',c:'回復',fact:'同じ負荷に慣れたら少しずつ回数や強度を上げると成長が続く（漸進性過負荷）',
+  say:{cat:'慣れたら少しずつ回数を増やせ。それで成長は続く。',dog:'慣れてきたら少しずつ回数や強度を上げると、成長が続くよ！',bear:'楽になってきたら少しずつ負荷を足せ！それが伸び続けるコツだ！'}},
+ {id:'s_posture',c:'メンタル',fact:'筋トレは姿勢改善にも役立つ。特に背中と体幹を鍛えると効果的',
+  say:{cat:'背中と体幹を鍛えれば姿勢も良くなる。地味に効くぞ。',dog:'筋トレは姿勢もよくなるんだよ！特に背中と体幹がおすすめ！',bear:'背中と腹を鍛えりゃ姿勢もシャキッとするぜ！一石二鳥だ！'}}
+];
+function pickTip(){
+  if(!state.tipsSeen)state.tipsSeen=[];
+  let pool=TIPS.filter(t=>state.tipsSeen.indexOf(t.id)<0);
+  if(!pool.length)pool=TIPS;
+  const t=pool[Math.floor(Math.random()*pool.length)];
+  if(state.tipsSeen.indexOf(t.id)<0){state.tipsSeen.push(t.id);save();}
+  return {id:t.id, text:(t.say[state.trainer]||t.fact)};
+}
+
+/* ============ state ============ */
+let state=load()||{
+  level:1, exp:0,
+  totalWorkouts:0, totalReps:0,
+  streak:0, bestStreak:0, lastDate:null,
+  affinity:{cat:0,dog:0,bear:0},
+  trainer:'cat',
+  badges:[],
+  settings:{voice:true,sound:true,rest:30}
+};
+// migration guard
+state.settings=Object.assign({voice:true,sound:true,rest:30,fontScale:'m',ttsFallback:true},state.settings||{});
+if(state.settings.fontScale==null)state.settings.fontScale='m';
+if(state.settings.ttsFallback==null)state.settings.ttsFallback=true;
+state.affinity=Object.assign({cat:0,dog:0,bear:0},state.affinity||{});
+state.customImg=state.customImg||{};
+state.customImgWO=state.customImgWO||{};
+state.recentLines=state.recentLines||{};
+state.tipsSeen=state.tipsSeen||[];
+
+function expNeed(lv){return 80+lv*40;}
+
+/* ============ badges def ============ */
+const BADGES=[
+  {id:'first',e:'🎉',n:'はじめの一歩',d:'初トレーニング完了',chk:s=>s.totalWorkouts>=1},
+  {id:'w10',e:'💪',n:'習慣の芽',d:'累計10回',chk:s=>s.totalWorkouts>=10},
+  {id:'w50',e:'🏆',n:'鍛錬の鬼',d:'累計50回',chk:s=>s.totalWorkouts>=50},
+  {id:'streak3',e:'🔥',n:'3日坊主卒業',d:'3日連続',chk:s=>s.bestStreak>=3},
+  {id:'streak7',e:'📅',n:'一週間戦士',d:'7日連続',chk:s=>s.bestStreak>=7},
+  {id:'streak30',e:'🌟',n:'鉄の意志',d:'30日連続',chk:s=>s.bestStreak>=30},
+  {id:'lv5',e:'⬆️',n:'成長期',d:'Lv.5到達',chk:s=>s.level>=5},
+  {id:'lv10',e:'👑',n:'ベテラン',d:'Lv.10到達',chk:s=>s.level>=10},
+  {id:'reps500',e:'🔢',n:'500レップ',d:'累計500回',chk:s=>s.totalReps>=500},
+  {id:'bond',e:'💞',n:'心の友',d:'誰かと親友ランク',chk:s=>Object.values(s.affinity).some(v=>v>=1000)}
+];
+
+/* ============ faces (SVG) ============ */
+function faceSVG(id,mood){
+  const c=TRAINERS[id].color;
+  mood=mood||'happy';
+  // eyes
+  let eyes;
+  if(id==='cat'){
+    eyes = mood==='happy'
+      ? '<path d="M35 46 q3 3 6 0" fill="none" stroke="#20263d" stroke-width="2.4" stroke-linecap="round"/><path d="M59 46 q3 3 6 0" fill="none" stroke="#20263d" stroke-width="2.4" stroke-linecap="round"/>'
+      : '<circle cx="38" cy="47" r="3.2" fill="#20263d"/><circle cx="62" cy="47" r="3.2" fill="#20263d"/>';
+  }else{
+    eyes = mood==='happy'
+      ? '<path d="M34 45 q4 5 8 0" fill="none" stroke="#20263d" stroke-width="2.6" stroke-linecap="round"/><path d="M58 45 q4 5 8 0" fill="none" stroke="#20263d" stroke-width="2.6" stroke-linecap="round"/>'
+      : '<circle cx="38" cy="47" r="3.6" fill="#20263d"/><circle cx="62" cy="47" r="3.6" fill="#20263d"/>';
+  }
+  let ears, muzzle, extra='';
+  if(id==='cat'){
+    ears='<path d="M28 30 L24 12 L42 24 Z" fill="'+c+'"/><path d="M72 30 L76 12 L58 24 Z" fill="'+c+'"/><path d="M30 26 L28 17 L37 23 Z" fill="#2a3350"/><path d="M70 26 L72 17 L63 23 Z" fill="#2a3350"/>';
+    muzzle='<path d="M50 54 l-3 4 h6 Z" fill="#20263d"/><path d="M50 58 q-4 4 -8 2 M50 58 q4 4 8 2" fill="none" stroke="#20263d" stroke-width="1.6" stroke-linecap="round"/>';
+    extra='<path d="M30 55 h-14 M30 59 h-13 M70 55 h14 M70 59 h13" stroke="#c9d3f2" stroke-width="1" opacity=".5"/>';
+  }else if(id==='dog'){
+    ears='<path d="M26 34 Q14 30 16 52 Q24 52 30 42 Z" fill="'+c+'"/><path d="M74 34 Q86 30 84 52 Q76 52 70 42 Z" fill="'+c+'"/>';
+    muzzle='<ellipse cx="50" cy="60" rx="12" ry="9" fill="#fff4e0"/><ellipse cx="50" cy="55" rx="4" ry="3" fill="#20263d"/><path d="M50 58 v5 M50 63 q-4 3 -7 1 M50 63 q4 3 7 1" fill="none" stroke="#20263d" stroke-width="1.8" stroke-linecap="round"/>';
+  }else{ // bear
+    ears='<circle cx="28" cy="28" r="11" fill="'+c+'"/><circle cx="72" cy="28" r="11" fill="'+c+'"/><circle cx="28" cy="28" r="5" fill="#5a3a34"/><circle cx="72" cy="28" r="5" fill="#5a3a34"/>';
+    muzzle='<ellipse cx="50" cy="60" rx="15" ry="11" fill="#ffe0cf"/><ellipse cx="50" cy="55" rx="5" ry="3.6" fill="#20263d"/><path d="M50 58 v5 M50 63 q-5 4 -9 1 M50 63 q5 4 9 1" fill="none" stroke="#20263d" stroke-width="2" stroke-linecap="round"/>';
+  }
+  const blush = mood==='happy' ? '<ellipse cx="30" cy="56" rx="6" ry="3.5" fill="#ff8fa3" opacity=".30"/><ellipse cx="70" cy="56" rx="6" ry="3.5" fill="#ff8fa3" opacity=".30"/>' : '';
+  // 男らしさを出す眉
+  const brow = id==='cat'
+    ? '<path d="M33 40 L45 43 M67 40 L55 43" stroke="#20263d" stroke-width="2.6" stroke-linecap="round"/>'
+    : '<path d="M32 40 q7 -3 13 0 M68 40 q-7 -3 -13 0" stroke="#20263d" stroke-width="3" stroke-linecap="round" fill="none"/>';
+  return '<g>'+ears+'<circle cx="50" cy="50" r="30" fill="'+c+'"/><circle cx="50" cy="52" r="24" fill="'+shade(c)+'"/>'+extra+eyes+brow+blush+muzzle+'</g>';
+}
+function dark(hex){
+  const n=parseInt(hex.slice(1),16);
+  let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  r=Math.max(0,r-70);g=Math.max(0,g-70);b=Math.max(0,b-60);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+// 上半身ポートレート: 広い肩・胸筋・タンクトップ + 頭
+function bodySVG(id){
+  const c=TRAINERS[id].color, tank=dark(c), sh=shade(c);
+  return '<g>'+
+    '<path d="M6 120 Q4 82 26 78 L74 78 Q96 82 94 120 Z" fill="'+c+'"/>'+          // 肩・胴
+    '<ellipse cx="20" cy="98" rx="13" ry="18" fill="'+sh+'" opacity=".45"/>'+       // 左デルト
+    '<ellipse cx="80" cy="98" rx="13" ry="18" fill="'+sh+'" opacity=".45"/>'+       // 右デルト
+    '<path d="M40 72 L44 58 M60 72 L56 58" stroke="'+tank+'" stroke-width="8" stroke-linecap="round"/>'+ // ストラップ
+    '<path d="M33 80 Q50 88 67 80 Q72 98 69 120 L31 120 Q28 98 33 80 Z" fill="'+tank+'"/>'+ // タンクトップ
+    '<path d="M50 84 v34" stroke="#00000033" stroke-width="2"/>'+                   // 胸の谷間
+    '<path d="M35 84 Q50 92 65 84" stroke="#ffffff22" stroke-width="2" fill="none"/>'+ // 襟ハイライト
+    '<path d="M43 68 h14 v12 h-14 Z" fill="'+sh+'"/>'+                              // 首
+    '<g transform="translate(50 40) scale(0.82) translate(-50 -50)">'+faceSVG(id,'happy')+'</g>'+
+  '</g>';
+}
+function avatarMarkup(id,wo){
+  // wo=true のときはトレーニング用画像を優先。無ければホーム用画像→SVGの順でフォールバック
+  let src=null;
+  if(wo && state.customImgWO && state.customImgWO[id]) src=state.customImgWO[id];
+  else if(!wo && state.customImg && state.customImg[id]) src=state.customImg[id];
+  else if(wo && state.customImg && state.customImg[id]) src=state.customImg[id];
+  if(src) return '<img src="'+src+'" alt="'+TRAINERS[id].name+'">';
+  return '<svg viewBox="0 0 100 120" preserveAspectRatio="xMidYMin slice">'+bodySVG(id)+'</svg>';
+}
+function shade(hex){
+  // lighten face center a touch
+  const n=parseInt(hex.slice(1),16);
+  let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  r=Math.min(255,r+30);g=Math.min(255,g+30);b=Math.min(255,b+30);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+/* ============ voice ============ */
+let jaVoice=null, jaVoiceIsMale=false;
+const MALE_HINTS=['ichiro','otoya','takumi','keita','daichi','naoki','male','男'];
+function initVoice(){
+  if(!('speechSynthesis' in window))return;
+  const pick=()=>{
+    const vs=speechSynthesis.getVoices();
+    const ja=vs.filter(v=>v.lang&&v.lang.toLowerCase().startsWith('ja'));
+    const male=ja.find(v=>MALE_HINTS.some(h=>v.name.toLowerCase().includes(h)));
+    jaVoice=male||ja[0]||null;
+    jaVoiceIsMale=!!male;
+  };
+  pick(); speechSynthesis.onvoiceschanged=pick;
+}
+// 性格に合わせた声色（全員雄）
+// ネコ=少年っぽい高め / イヌ=普通の男性 / クマ=低い低音
+const VOICE={
+  cat: {rate:1.02, pitch:1.30, vol:0.95},  // 少年っぽく、少し高め
+  dog: {rate:1.05, pitch:0.92, vol:1.0},   // 標準的な男性
+  bear:{rate:0.95, pitch:0.45, vol:1.0}    // 野太い低音
+};
+function speak(text){
+  if(!state.settings.voice||!('speechSynthesis'in window))return;
+  try{
+    speechSynthesis.cancel();
+    const v=VOICE[state.trainer]||VOICE.cat;
+    const u=new SpeechSynthesisUtterance(text.replace(/[！]/g,'! ').replace(/[……]/g,'、'));
+    u.lang='ja-JP'; if(jaVoice)u.voice=jaVoice;
+    u.rate=v.rate; u.pitch=v.pitch; u.volume=v.vol;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ============ beep ============ */
+let actx=null;
+function beep(freq,dur){
+  if(!state.settings.sound)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.connect(g);g.connect(actx.destination);
+    o.frequency.value=freq;o.type='sine';
+    g.gain.setValueAtTime(0.001,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.25,actx.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+dur);
+    o.start();o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+
+/* ============ recorded voice (VOICEVOX) ============ */
+// HTMLと同じ場所の voices/ フォルダに {trainer}_{cat}_{idx}.wav があれば再生、
+// 無ければ従来の読み上げ(speechSynthesis)にフォールバック
+const VOICE_DIR='voices/';
+let voiceAudio=null;
+// 状況(時間帯/連続日数/サボり明け/親密度/部位/累計)で出し分け＋直近の繰り返しを回避
+function ctxNow(extra){
+  let hour=12; try{hour=new Date().getHours();}catch(e){}
+  return Object.assign({
+    hour:hour,
+    streak:state.streak||0,
+    rank:rankIndex(state.affinity[state.trainer]||0),
+    total:state.totalWorkouts||0,
+    daysAway: state.lastDate ? daysBetween(state.lastDate, todayStr()) : 0
+  }, extra||{});
+}
+function lineMatches(w,ctx){
+  if(!w)return true;
+  if(w.hour && !(ctx.hour>=w.hour[0] && ctx.hour<w.hour[1])) return false;
+  if(w.streakMin!=null && !(ctx.streak>=w.streakMin)) return false;
+  if(w.daysAwayMin!=null && !(ctx.daysAway>=w.daysAwayMin)) return false;
+  if(w.rankMin!=null && !(ctx.rank>=w.rankMin)) return false;
+  if(w.totalMin!=null && !(ctx.total>=w.totalMin)) return false;
+  if(w.part && ctx.part!==w.part) return false;
+  return true;
+}
+function pickLine(cat,extra){
+  const t=TRAINERS[state.trainer];
+  const ctx=ctxNow(extra);
+  const arr=t.lines[cat]||[];
+  let eligible=[];
+  arr.forEach((ln,idx)=>{
+    const o=(typeof ln==='string')?{text:ln}:ln;
+    if(lineMatches(o.when,ctx)) eligible.push({text:o.text,idx:idx,cond:!!o.when});
+  });
+  if(!eligible.length) arr.forEach((ln,idx)=>{const o=(typeof ln==='string')?{text:ln}:ln; eligible.push({text:o.text,idx:idx,cond:false});});
+  const cond=eligible.filter(e=>e.cond), gen=eligible.filter(e=>!e.cond);
+  // 状況セリフがあれば優先的に(55%)採用。無ければ通常から
+  let pool=(cond.length && Math.random()<0.55) ? cond : (gen.length?gen:eligible);
+  // 直近に言ったものは避ける
+  if(!state.recentLines)state.recentLines={};
+  const recent=state.recentLines[t.id]||[];
+  let fresh=pool.filter(e=>recent.indexOf(cat+'_'+e.idx)<0);
+  if(!fresh.length)fresh=pool;
+  const chosen=fresh[Math.floor(Math.random()*fresh.length)];
+  const rl=state.recentLines[t.id]||[];
+  rl.push(cat+'_'+chosen.idx); while(rl.length>26)rl.shift();
+  state.recentLines[t.id]=rl;
+  return {text:chosen.text, file:t.id+'_'+cat+'_'+chosen.idx+'.wav'};
+}
+function rankLine(id,rank){
+  const txt=TRAINERS[id].lines.rankUp[rank];
+  return txt?{text:txt,file:id+'_rankUp_'+rank+'.wav'}:null;
+}
+function say(lo,next){
+  if(!lo||!state.settings.voice)return;
+  if(voiceAudio){try{voiceAudio.pause();}catch(e){}}
+  try{speechSynthesis.cancel();}catch(e){}
+  let a;
+  // 録音音声が無いセリフをどうするか: ttsFallback=false なら読み上げず無音(次があれば進む)
+  const tts=(state.settings.ttsFallback!==false);
+  try{a=new Audio(VOICE_DIR+lo.file);}catch(e){ if(tts)speak(lo.text); return; }
+  voiceAudio=a;
+  let fell=false;
+  const fallback=()=>{if(fell)return;fell=true; if(tts)speak(lo.text); if(next)setTimeout(()=>say(next),tts?1800:200);};
+  a.onerror=fallback;
+  a.onended=()=>{if(next)say(next);};
+  const p=a.play();
+  if(p&&p.catch)p.catch(fallback);
+}
+
+/* ============ util ============ */
+const $=s=>document.querySelector(s);
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function daysBetween(a,b){const p=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};return Math.round((p(b)-p(a))/86400000);}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+
+/* ============ render home ============ */
+function renderTrainers(){
+  const box=$('#trainers');box.innerHTML='';
+  Object.values(TRAINERS).forEach(t=>{
+    const p=state.affinity[t.id];
+    const info=nextRankInfo(p);
+    const pct=info.max?100:Math.round((p-info.base)/(info.next-info.base)*100);
+    const el=document.createElement('div');
+    el.className='tcard'+(state.trainer===t.id?' active':'');
+    el.style.setProperty('--tc',t.color);
+    el.innerHTML='<div class="face">'+avatarMarkup(t.id)+'</div>'+
+      '<div class="tname">'+t.name+'</div>'+
+      '<div class="trole">'+t.role+'</div>'+
+      '<div class="aff">'+rankName(p)+'</div>'+
+      '<div class="affbar"><i style="width:'+pct+'%"></i></div>';
+    el.onclick=()=>{state.trainer=t.id;save();renderTrainers();updateTrainerLine(true);};
+    box.appendChild(el);
+  });
+}
+function updateTrainerLine(greet){
+  const t=TRAINERS[state.trainer];
+  const lo=pickLine('greet');
+  $('#trainer-line').innerHTML='<b style="color:'+t.color+'">'+t.name+'</b>（'+t.species+'・'+rankName(state.affinity[t.id])+'）:「'+lo.text+'」';
+  if(greet)say(lo);
+}
+function renderTopStats(){
+  $('#lv').textContent=state.level;
+  $('#streak').textContent=state.streak;
+  $('#mini-streak').textContent=state.streak;
+  $('#mini-total').textContent=state.totalWorkouts;
+  const need=expNeed(state.level);
+  $('#exp-cur').textContent=state.exp;
+  $('#exp-need').textContent=need;
+  $('#expbar').style.width=Math.min(100,state.exp/need*100)+'%';
+}
+
+/* ============ bonds tab ============ */
+function renderBonds(){
+  const box=$('#bonds-list');box.innerHTML='';
+  Object.values(TRAINERS).forEach(t=>{
+    const p=state.affinity[t.id];
+    const ri=rankIndex(p);
+    const info=nextRankInfo(p);
+    const pct=info.max?100:Math.round((p-info.base)/(info.next-info.base)*100);
+    // unlocked special line = highest rankUp line up to current rank
+    let special='';
+    for(let r=1;r<=ri;r++){if(t.lines.rankUp[r])special=t.lines.rankUp[r];}
+    const el=document.createElement('div');
+    el.className='relship';el.style.setProperty('--tc',t.color);
+    el.innerHTML='<div class="face">'+avatarMarkup(t.id)+'</div>'+
+      '<div style="flex:1">'+
+        '<div class="rname">'+t.name+' <span class="rrank">'+rankName(p)+'</span></div>'+
+        '<div class="rbar"><i style="width:'+pct+'%"></i></div>'+
+        '<div class="rp">'+(info.max?'親密度 MAX！':'次のランクまで '+(info.next-p)+' pt')+'</div>'+
+        (special?'<div style="font-size:11px;margin-top:6px;color:'+t.color+';line-height:1.5">💬「'+special+'」</div>':'<div style="font-size:11px;margin-top:6px;color:var(--sub)">一緒に鍛えて仲を深めよう</div>')+
+      '</div>';
+    box.appendChild(el);
+  });
+}
+
+/* ============ stats tab ============ */
+function renderStats(){
+  $('#st-total').textContent=state.totalWorkouts;
+  $('#st-reps').textContent=state.totalReps;
+  $('#st-streak').textContent=state.streak;
+  $('#st-best').textContent=state.bestStreak;
+  $('#st-tips').textContent=(state.tipsSeen?state.tipsSeen.length:0)+' / '+TIPS.length;
+  const g=$('#badge-grid');g.innerHTML='';
+  BADGES.forEach(b=>{
+    const has=state.badges.includes(b.id);
+    const el=document.createElement('div');
+    el.className='bd'+(has?'':' lock');
+    el.innerHTML='<span class="be">'+(has?b.e:'🔒')+'</span><div><b>'+b.n+'</b><small>'+b.d+'</small></div>';
+    g.appendChild(el);
+  });
+}
+
+/* ============ settings ============ */
+function applyFontScale(){
+  document.body.classList.remove('fs-s','fs-m','fs-l');
+  document.body.classList.add('fs-'+(state.settings.fontScale||'m'));
+}
+function renderSettings(){
+  $('#tg-voice').classList.toggle('on',state.settings.voice);
+  $('#tg-tts').classList.toggle('on',state.settings.ttsFallback!==false);
+  $('#tg-sound').classList.toggle('on',state.settings.sound);
+  $('#rest-val').textContent=state.settings.rest;
+  $('#rest-label').textContent=state.settings.rest+'秒';
+  document.querySelectorAll('.fs-btn').forEach(b=>b.classList.toggle('btn-primary',b.dataset.fs===(state.settings.fontScale||'m')));
+  document.querySelectorAll('.fs-btn').forEach(b=>b.classList.toggle('btn-ghost',b.dataset.fs!==(state.settings.fontScale||'m')));
+  renderImgSwap();
+}
+function renderImgSwap(){
+  const box=$('#img-swap'); if(!box)return; box.innerHTML='';
+  Object.values(TRAINERS).forEach(t=>{
+    const hasH=!!(state.customImg&&state.customImg[t.id]);
+    const hasW=!!(state.customImgWO&&state.customImgWO[t.id]);
+    const row=document.createElement('div');
+    row.className='setting-row'; row.style.setProperty('--tc',t.color); row.style.alignItems='flex-start';
+    row.innerHTML=
+      '<div class="face" style="width:46px;height:46px;border-radius:10px;overflow:hidden;background:#0c1224;flex-shrink:0">'+avatarMarkup(t.id)+'</div>'+
+      '<div style="flex:1">'+
+        '<div class="sn">'+t.name+'</div>'+
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">'+
+          '<label class="btn btn-ghost btn-sm" style="width:auto;cursor:pointer">ホーム用'+(hasH?'✓':'')+'<input type="file" accept="image/*" data-img="'+t.id+'" data-slot="home" style="display:none"></label>'+
+          (hasH?'<button class="btn btn-ghost btn-sm" data-imgclr="'+t.id+'" data-slot="home" style="width:auto">戻す</button>':'')+
+          '<label class="btn btn-ghost btn-sm" style="width:auto;cursor:pointer">トレ用'+(hasW?'✓':'')+'<input type="file" accept="image/*" data-img="'+t.id+'" data-slot="wo" style="display:none"></label>'+
+          (hasW?'<button class="btn btn-ghost btn-sm" data-imgclr="'+t.id+'" data-slot="wo" style="width:auto">戻す</button>':'')+
+        '</div>'+
+      '</div>';
+    box.appendChild(row);
+  });
+  box.querySelectorAll('[data-img]').forEach(inp=>inp.onchange=e=>onImgPick(inp.dataset.img,inp.dataset.slot,e.target.files[0]));
+  box.querySelectorAll('[data-imgclr]').forEach(b=>b.onclick=()=>{
+    const store=b.dataset.slot==='wo'?state.customImgWO:state.customImg;
+    delete store[b.dataset.imgclr];save();renderImgSwap();renderTrainers();toast('標準の絵に戻したよ');
+  });
+}
+function onImgPick(id,slot,file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=512; let w=img.width,h=img.height;
+      if(w>h&&w>max){h=Math.round(h*max/w);w=max;} else if(h>max){w=Math.round(w*max/h);h=max;}
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      let data; try{data=cv.toDataURL('image/jpeg',0.85);}catch(e){data=reader.result;}
+      const store=slot==='wo'?state.customImgWO:state.customImg;
+      store[id]=data;
+      try{localStorage.setItem(KEY,JSON.stringify(state));}
+      catch(e){mem=JSON.parse(JSON.stringify(state));toast('画像は今回のみ有効（保存容量オーバー）');}
+      renderImgSwap();renderTrainers();
+      toast(TRAINERS[id].name+'の'+(slot==='wo'?'トレーニング用':'ホーム用')+'画像を設定したよ！');
+    };
+    img.onerror=()=>toast('画像を読み込めませんでした');
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============ tabs ============ */
+function switchTab(name){
+  ['home','bonds','stats','settings'].forEach(n=>$('#tab-'+n).classList.toggle('hidden',n!==name));
+  document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  if(name==='bonds')renderBonds();
+  if(name==='stats')renderStats();
+  if(name==='settings')renderSettings();
+}
+
+/* ============ build workout plan ============ */
+// returns array of {ex, target, type}
+function buildPlan(mode,opts){
+  let plan=[];
+  const mk=(key,target)=>({key,ex:EX[key],target:target||EX[key].def,type:EX[key].type});
+  if(mode==='beginner'){
+    plan=[mk('pushup',10),mk('squat',15),mk('crunch',15),mk('plank',30)];
+  }else if(mode==='bodypart'){
+    const keys=BODYPARTS[opts.part]||[];
+    plan=keys.slice(0,4).map(k=>mk(k));
+  }else if(mode==='hiit'){
+    const rounds=opts.rounds||3;
+    const picks=[];
+    for(let i=0;i<4;i++)picks.push(rand(HIIT_POOL));
+    for(let r=0;r<rounds;r++){picks.forEach(k=>plan.push(mk(k,20)));}
+  }else if(mode==='daily'){
+    // date-seeded
+    const seed=todayStr().split('-').reduce((a,c)=>a+parseInt(c),0);
+    const pool=DAILY_POOL.slice();
+    const chosen=[];
+    let s=seed;
+    while(chosen.length<4&&pool.length){s=(s*9301+49297)%233280;const idx=Math.floor(s/233280*pool.length);chosen.push(pool.splice(idx,1)[0]);}
+    plan=chosen.map(k=>mk(k));
+  }else if(mode==='free'){
+    plan=opts.items.map(it=>mk(it.key,it.target));
+  }else if(mode==='single'){
+    plan=[mk(opts.key)];
+  }
+  return plan;
+}
+
+/* ============ menu sheets ============ */
+function openMode(mode){
+  if(mode==='beginner'){startWorkout('beginner',{},'初心者 全身');return;}
+  if(mode==='daily'){startWorkout('daily',{},'おまかせ日替わり');return;}
+  if(mode==='bodypart')return sheetBodypart();
+  if(mode==='hiit')return sheetHiit();
+  if(mode==='free')return sheetFree();
+  if(mode==='guide')return sheetGuideLibrary('お尻');
+}
+function showSheet(html){$('#sheet-inner').innerHTML=html;$('#sheet').classList.remove('hidden');}
+function closeSheet(){
+  $('#sheet').classList.add('hidden');
+  if(WO&&WO.pausedForGuide){WO.pausedForGuide=false;resumeWorkoutTimer();}
+}
+
+function sheetBodypart(){
+  const parts=Object.keys(BODYPARTS);
+  let sel=null;
+  showSheet('<h3>🎯 部位を選ぶ</h3><p class="hint">鍛えたい部位を1つ選んでね</p>'+
+    '<div class="chip-grid" id="bp-grid">'+parts.map(p=>'<div class="chip" data-p="'+p+'">'+p+'<small>'+BODYPARTS[p].length+'種目</small></div>').join('')+'</div>'+
+    '<button class="btn btn-primary" id="bp-go" disabled style="opacity:.5">部位を選んでね</button>');
+  $('#bp-grid').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    $('#bp-grid').querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');sel=c.dataset.p;
+    const g=$('#bp-go');g.disabled=false;g.style.opacity=1;g.textContent=sel+'を鍛える';
+  });
+  $('#bp-go').onclick=()=>{if(!sel)return;closeSheet();startWorkout('bodypart',{part:sel},'部位別：'+sel);};
+}
+
+function sheetHiit(){
+  let rounds=3;
+  showSheet('<h3>⚡ 時短HIIT</h3><p class="hint">20秒運動 → 10秒休憩 × 4種目 を何周？</p>'+
+    '<div class="chip-grid" style="grid-template-columns:1fr 1fr 1fr">'+
+      [2,3,4].map(r=>'<div class="chip'+(r===3?' on':'')+'" data-r="'+r+'">'+r+'周<small>約'+(r*4*0.5)+'分</small></div>').join('')+
+    '</div>'+
+    '<button class="btn btn-primary" id="hi-go">スタート</button>');
+  $('#sheet-inner').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    $('#sheet-inner').querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');rounds=parseInt(c.dataset.r);
+  });
+  $('#hi-go').onclick=()=>{closeSheet();startWorkout('hiit',{rounds},'時短HIIT '+rounds+'周');};
+}
+
+function sheetFree(){
+  const items=FREE_POOL.map(k=>({key:k,target:EX[k].def,on:false,open:false}));
+  const render=()=>{
+    $('#sheet-inner').innerHTML='<h3>🛠️ フリーメニュー</h3><p class="hint">やる種目をタップして選び、回数を調整。「？」で説明が見られます</p>'+
+      '<div class="ex-list">'+items.map((it,i)=>{
+        const e=EX[it.key];const unit=e.type==='time'?'秒':e.type==='pelvic'?'専用':'回';
+        const spin=e.type==='pelvic'?'<div class="spin"><span class="val">専用タイマー</span></div>':'<div class="spin"><button data-dec="'+i+'" aria-label="'+e.n+'を減らす">−</button><span class="val">'+it.target+unit+'</span><button data-inc="'+i+'" aria-label="'+e.n+'を増やす">＋</button></div>';
+        return '<div class="ex-wrap">'+
+          '<div class="ex-item'+(it.on?' on':'')+'" data-i="'+i+'">'+
+            '<div class="tog" data-tog="'+i+'"></div>'+
+            '<div style="flex:1"><div class="exn">'+e.n+'</div><div class="exm">'+e.m+'</div></div>'+
+            '<button class="ex-info" data-info="'+i+'" aria-label="説明">？</button>'+
+            spin+
+          '</div>'+
+          (it.open?'<div class="ex-desc">'+e.note+'</div>':'')+
+        '</div>';
+      }).join('')+'</div>'+
+      '<button class="btn btn-primary" id="fr-go">選んだ種目でスタート</button>';
+    bind();
+  };
+  const bind=()=>{
+    $('#sheet-inner').querySelectorAll('[data-tog]').forEach(b=>b.onclick=()=>{const i=+b.dataset.tog;items[i].on=!items[i].on;render();});
+    $('#sheet-inner').querySelectorAll('[data-info]').forEach(b=>b.onclick=()=>{const i=+b.dataset.info;items[i].open=!items[i].open;render();});
+    $('#sheet-inner').querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>{const i=+b.dataset.inc;const st=EX[items[i].key].type==='time'?5:1;items[i].target+=st;items[i].on=true;render();});
+    $('#sheet-inner').querySelectorAll('[data-dec]').forEach(b=>b.onclick=()=>{const i=+b.dataset.dec;const st=EX[items[i].key].type==='time'?5:1;const min=EX[items[i].key].type==='time'?10:1;items[i].target=Math.max(min,items[i].target-st);render();});
+    $('#fr-go').onclick=()=>{const chosen=items.filter(x=>x.on);if(!chosen.length){toast('種目を1つ以上選んでね');return;}closeSheet();startWorkout('free',{items:chosen},'フリーメニュー');};
+  };
+  showSheet('');render();
+}
+
+/* ============ FORM & MUSCLE GUIDE ============ */
+function muscleSVG(view,e){
+  const m=e.muscles||{};
+  const primary=m[view]||[];
+  const assist=m[view==='front'?'assistFront':'assistBack']||[];
+  const z=n=>'muscle-zone'+(primary.includes(n)?' hit':assist.includes(n)?' assist':'');
+  if(view==='front')return '<svg viewBox="0 0 150 240" aria-hidden="true">'+
+    '<circle class="muscle-base" cx="75" cy="23" r="15"/><path class="muscle-base" d="M55 42 Q75 34 95 42 L105 112 Q98 137 91 145 L88 224 H68 L66 145 Q53 132 47 112Z"/>'+
+    '<path class="muscle-base" d="M53 48 L32 58 16 121 28 126 46 77M97 48 L118 58 134 121 122 126 104 77" fill="none" stroke-width="15" stroke-linecap="round"/>'+
+    '<ellipse class="'+z('shoulders')+'" cx="51" cy="54" rx="11" ry="9"/><ellipse class="'+z('shoulders')+'" cx="99" cy="54" rx="11" ry="9"/>'+
+    '<ellipse class="'+z('chest')+'" cx="63" cy="67" rx="14" ry="11"/><ellipse class="'+z('chest')+'" cx="87" cy="67" rx="14" ry="11"/>'+
+    '<path class="'+z('diaphragm')+'" d="M56 81 Q75 91 94 81 L92 88 Q75 96 58 88Z"/>'+
+    '<rect class="'+z('abs')+'" x="65" y="84" width="20" height="45" rx="8"/><path class="'+z('obliques')+'" d="M55 84 L65 91 62 127 52 117Z"/><path class="'+z('obliques')+'" d="M95 84 L85 91 88 127 98 117Z"/>'+
+    '<ellipse class="'+z('pelvic')+'" cx="75" cy="135" rx="17" ry="8"/><ellipse class="'+z('hips')+'" cx="58" cy="137" rx="10" ry="12"/><ellipse class="'+z('hips')+'" cx="92" cy="137" rx="10" ry="12"/>'+
+    '<rect class="'+z('arms')+'" x="26" y="66" width="12" height="53" rx="6" transform="rotate(15 32 92)"/><rect class="'+z('arms')+'" x="112" y="66" width="12" height="53" rx="6" transform="rotate(-15 118 92)"/>'+
+    '<path class="'+z('quads')+'" d="M56 145 Q67 142 69 151 L67 190 54 190Z"/><path class="'+z('quads')+'" d="M94 145 Q83 142 81 151 L83 190 96 190Z"/>'+
+    '<rect class="'+z('calves')+'" x="54" y="187" width="13" height="36" rx="6"/><rect class="'+z('calves')+'" x="83" y="187" width="13" height="36" rx="6"/>'+
+    '</svg>';
+  return '<svg viewBox="0 0 150 240" aria-hidden="true">'+
+    '<circle class="muscle-base" cx="75" cy="23" r="15"/><path class="muscle-base" d="M55 42 Q75 34 95 42 L105 112 Q98 137 91 145 L88 224 H68 L66 145 Q53 132 47 112Z"/>'+
+    '<path class="muscle-base" d="M53 48 L32 58 16 121 28 126 46 77M97 48 L118 58 134 121 122 126 104 77" fill="none" stroke-width="15" stroke-linecap="round"/>'+
+    '<ellipse class="'+z('shoulders')+'" cx="52" cy="55" rx="12" ry="10"/><ellipse class="'+z('shoulders')+'" cx="98" cy="55" rx="12" ry="10"/>'+
+    '<path class="'+z('back')+'" d="M59 61 Q75 52 91 61 L96 111 Q75 127 54 111Z"/>'+
+    '<rect class="'+z('arms')+'" x="26" y="66" width="12" height="53" rx="6" transform="rotate(15 32 92)"/><rect class="'+z('arms')+'" x="112" y="66" width="12" height="53" rx="6" transform="rotate(-15 118 92)"/>'+
+    '<ellipse class="'+z('glutes')+'" cx="63" cy="137" rx="16" ry="14"/><ellipse class="'+z('glutes')+'" cx="87" cy="137" rx="16" ry="14"/>'+
+    '<path class="'+z('hamstrings')+'" d="M55 149 Q67 145 68 156 L66 190 53 190Z"/><path class="'+z('hamstrings')+'" d="M95 149 Q83 145 82 156 L84 190 97 190Z"/>'+
+    '<rect class="'+z('calves')+'" x="54" y="187" width="13" height="36" rx="6"/><rect class="'+z('calves')+'" x="83" y="187" width="13" height="36" rx="6"/>'+
+    '</svg>';
+}
+
+function sheetGuideLibrary(active){
+  active=active||'お尻';
+  const cats=Object.keys(GUIDE_CATEGORIES);
+  const keys=GUIDE_CATEGORIES[active]||GUIDE_CATEGORIES['全種目'];
+  showSheet('<div class="guide-hero"><h3>🧭 フォーム・筋肉図鑑</h3><p class="hint" style="margin:0">赤は主に使う筋肉、橙は補助的に使う筋肉。部分痩せを保証するものではありません。</p></div>'+
+    '<div class="guide-tabs" role="tablist" aria-label="図鑑カテゴリ">'+cats.map(c=>'<button class="btn btn-ghost guide-tab'+(c===active?' on':'')+'" data-guide-cat="'+c+'" role="tab" aria-selected="'+(c===active)+'" aria-label="'+c+'カテゴリ">'+c+'</button>').join('')+'</div>'+
+    '<div class="guide-list">'+keys.map(k=>{const e=EX[k];return '<button class="guide-item" data-guide-key="'+k+'" aria-label="'+e.n+'の詳しいフォームを見る"><span class="gicon">'+e.icon+'</span><span><span class="gn">'+e.n+'</span><span class="gm">主：'+e.primary+'<br>意識：'+e.focus+'</span></span><span class="arrow">›</span></button>';}).join('')+'</div>'+
+    '<p class="guide-disclaimer">この図鑑は一般的な運動情報です。痛みを我慢して続けず、持病・けが・術後・妊娠中など個別の事情がある場合は医療・運動の専門職へ相談してください。</p>'+
+    '<button class="btn btn-ghost" id="guide-close" aria-label="図鑑を閉じる">閉じる</button>');
+  document.querySelectorAll('[data-guide-cat]').forEach(b=>b.onclick=()=>sheetGuideLibrary(b.dataset.guideCat));
+  document.querySelectorAll('[data-guide-key]').forEach(b=>b.onclick=()=>openGuideDetail(b.dataset.guideKey,false,active));
+  $('#guide-close').onclick=closeSheet;
+}
+
+function openGuideDetail(key,fromWorkout,returnCat){
+  const e=EX[key];if(!e)return;
+  if(fromWorkout)pauseWorkoutForGuide();
+  const sections=[
+    ['主に使う筋肉',e.primary],['補助的に使う筋肉',e.secondary],['意識する身体の位置',e.focus],['開始姿勢',e.start],
+    ['呼吸',e.breathing],['正しく効いている感覚',e.feel],['よくある間違い',e.mistakes],['簡単な代替方法',e.easy],['難しい発展方法',e.hard]
+  ];
+  const backLabel=fromWorkout?'ワークアウトへ戻る':'図鑑へ戻る';
+  showSheet('<div class="guide-detail-head"><button class="btn btn-ghost guide-back" id="guide-back" aria-label="'+backLabel+'">‹</button><div><h3>'+e.icon+' '+e.n+'</h3><p class="hint">'+e.m+'・'+(e.type==='pelvic'?'専用ガイドタイマー':e.type==='time'?'時間式':'回数式')+'</p></div></div>'+
+    '<div class="muscle-figures" aria-label="対象筋肉図"><div class="muscle-figure">'+muscleSVG('front',e)+'<small>前面</small></div><div class="muscle-figure">'+muscleSVG('back',e)+'<small>背面</small></div></div>'+
+    sections.slice(0,4).map(s=>'<section class="guide-section"><h4>'+s[0]+'</h4><p>'+s[1]+'</p></section>').join('')+
+    '<section class="guide-section"><h4>動作手順</h4><ol>'+e.steps.map(x=>'<li>'+x+'</li>').join('')+'</ol></section>'+
+    sections.slice(4).map(s=>'<section class="guide-section"><h4>'+s[0]+'</h4><p>'+s[1]+'</p></section>').join('')+
+    '<section class="guide-section guide-warning"><h4>痛みが出た場合の注意</h4><p>'+e.pain+'</p></section>'+
+    (fromWorkout?'<button class="btn btn-primary" id="guide-return" aria-label="詳細を閉じてワークアウトへ戻る">ワークアウトへ戻る</button>':'<button class="btn btn-good" id="guide-start" aria-label="'+e.n+'を直接開始する">この種目を開始</button>')+
+    '<p class="guide-disclaimer">筋トレで特定部位の筋肉を鍛えることはできますが、その場所だけの体脂肪が落ちるとは限りません。骨盤底筋は大殿筋や前立腺とは別の組織です。</p>');
+  $('#guide-back').onclick=()=>{if(fromWorkout)closeSheet();else sheetGuideLibrary(returnCat||'全種目');};
+  if(fromWorkout)$('#guide-return').onclick=closeSheet;
+  else $('#guide-start').onclick=()=>{closeSheet();startWorkout('single',{key},'図鑑：'+e.n);};
+}
+
+/* ============ WORKOUT RUNNER ============ */
+let WO=null;
+function startWorkout(mode,opts,title){
+  const plan=buildPlan(mode,opts);
+  if(!plan.length){toast('メニューを作れませんでした');return;}
+  WO={mode,opts:opts||{},plan,idx:0,phase:'exercise',title,repsDone:0,timer:null,tapCount:0,
+    timeLeft:0,phaseIndex:0,phaseLeft:0,phaseCycle:0,pausedForGuide:false};
+  $('#workout').classList.remove('hidden');
+  $('#wo-title').textContent=title;
+  $('#wo-face').innerHTML=avatarMarkup(state.trainer,true);
+  $('#wo-face').style.filter='drop-shadow(0 10px 24px '+TRAINERS[state.trainer].color+'55)';
+  renderProg();
+  // ここで挨拶は鳴らさない(最初の種目セリフと二重に鳴るのを防ぐ)
+  setTimeout(()=>showExercise(),300);
+}
+function renderProg(){
+  const p=$('#wo-prog');p.innerHTML='';
+  WO.plan.forEach((_,i)=>{const el=document.createElement('i');if(i<WO.idx)el.className='done';else if(i===WO.idx)el.className='cur';p.appendChild(el);});
+}
+function stopTimer(){if(WO&&WO.timer){clearInterval(WO.timer);WO.timer=null;}}
+
+function pauseWorkoutForGuide(){
+  if(WO&&WO.timer){stopTimer();WO.pausedForGuide=true;}
+}
+function resumeWorkoutTimer(){
+  if(!WO)return;
+  const step=WO.plan[WO.idx];
+  if(WO.phase==='rest')startRestCountdown();
+  else if(step&&step.type==='time')startExerciseCountdown(step);
+  else if(step&&step.type==='pelvic')startPelvicCountdown(step);
+}
+
+function bindFormButton(step){
+  const b=$('#wo-form');if(b)b.onclick=()=>openGuideDetail(step.key,true);
+}
+
+function showExercise(){
+  const step=WO.plan[WO.idx];
+  WO.phase='exercise';WO.tapCount=0;
+  renderProg();
+  $('#wo-rest').classList.add('hidden');
+  $('#wo-exname').textContent=step.ex.n;
+  $('#wo-note').textContent=step.ex.note;
+  $('#wo-focus').textContent='🎯 意識：'+step.ex.focus;
+  $('#wo-phase').classList.add('hidden');
+  $('#wo-cue').classList.add('hidden');
+  const startLo=pickLine('start',{part:step.ex.m});
+  $('#wo-bubble').textContent=startLo.text;
+  say(startLo);
+  const acts=$('#wo-actions');
+
+  if(step.type==='time'){
+    WO.timeLeft=step.target;
+    $('#wo-unit').textContent='秒';
+    $('#wo-target').textContent=WO.timeLeft;
+    acts.innerHTML='<div class="btn-row"><button class="btn btn-ghost" id="wo-form" aria-label="'+step.ex.n+'の詳しいフォームを開く">📖 詳しいフォーム</button><button class="btn btn-ghost" id="wo-skip" aria-label="この種目をスキップする">スキップ ▶</button></div>';
+    bindFormButton(step);
+    $('#wo-skip').onclick=()=>{stopTimer();afterExercise(step);};
+    stopTimer();
+    startExerciseCountdown(step);
+  }else if(step.type==='pelvic'){
+    initPelvicTimer(step);
+    acts.innerHTML='<div class="btn-row"><button class="btn btn-ghost" id="wo-form" aria-label="'+step.ex.n+'の詳しいフォームを開く">📖 詳しいフォーム</button><button class="btn btn-ghost" id="wo-skip" aria-label="このガイドをスキップする">スキップ ▶</button></div>';
+    bindFormButton(step);
+    $('#wo-skip').onclick=()=>{stopTimer();afterExercise(step);};
+  }else{
+    $('#wo-unit').textContent='回';
+    $('#wo-target').textContent=step.target;
+    acts.innerHTML='<button class="btn btn-ghost" id="wo-form" aria-label="'+step.ex.n+'の詳しいフォームを開く">📖 詳しいフォーム</button><button class="btn btn-good" id="wo-done" aria-label="'+step.target+'回完了した">✓ 完了（'+step.target+'回やった）</button>';
+    bindFormButton(step);
+    $('#wo-done').onclick=()=>{beep(1320,0.2);afterExercise(step);};
+  }
+}
+
+function startExerciseCountdown(step){
+  stopTimer();
+  WO.timer=setInterval(()=>{
+    WO.timeLeft--;
+    $('#wo-target').textContent=WO.timeLeft;
+    if(WO.timeLeft<=3&&WO.timeLeft>0)beep(880,0.12);
+    if(WO.timeLeft%7===0&&WO.timeLeft>0){const lo=pickLine('during',{part:step.ex.m});$('#wo-bubble').textContent=lo.text;say(lo);}
+    if(WO.timeLeft<=0){stopTimer();beep(1320,0.25);afterExercise(step);}
+  },1000);
+}
+
+function pelvicTotal(step){return step.ex.phases.reduce((sum,p)=>sum+p.sec,0)*step.ex.cycles;}
+function renderPelvicPhase(step){
+  const p=step.ex.phases[WO.phaseIndex];
+  $('#wo-target').textContent=WO.phaseLeft;
+  $('#wo-unit').textContent='秒';
+  $('#wo-phase').textContent=(WO.phaseCycle+1)+' / '+step.ex.cycles+'周　'+p.label;
+  $('#wo-cue').textContent=p.cue;
+  $('#wo-phase').classList.remove('hidden');
+  $('#wo-cue').classList.remove('hidden');
+}
+function initPelvicTimer(step){
+  WO.timeLeft=pelvicTotal(step);WO.phaseIndex=0;WO.phaseCycle=0;WO.phaseLeft=step.ex.phases[0].sec;
+  renderPelvicPhase(step);startPelvicCountdown(step);
+}
+function startPelvicCountdown(step){
+  stopTimer();
+  WO.timer=setInterval(()=>{
+    WO.timeLeft--;WO.phaseLeft--;
+    if(WO.timeLeft<=0){$('#wo-target').textContent=0;stopTimer();beep(1320,0.25);afterExercise(step);return;}
+    if(WO.phaseLeft<=0){
+      WO.phaseIndex++;
+      if(WO.phaseIndex>=step.ex.phases.length){
+        WO.phaseIndex=0;WO.phaseCycle++;
+        const lo=pickLine('during',{part:'骨盤底'});$('#wo-bubble').textContent=lo.text;say(lo);
+      }
+      WO.phaseLeft=step.ex.phases[WO.phaseIndex].sec;
+      beep(WO.phaseIndex===0?880:660,0.1);
+    }
+    renderPelvicPhase(step);
+  },1000);
+}
+function afterExercise(step){
+  stopTimer();
+  WO.repsDone += step.type==='pelvic'?Math.round(pelvicTotal(step)/3):step.type==='time'? Math.round(step.target/3) : step.target;
+  const setLo=pickLine('finishSet');
+  $('#wo-bubble').textContent=setLo.text;
+  say(setLo);
+  WO.idx++;
+  if(WO.idx>=WO.plan.length){setTimeout(finishWorkout,700);return;}
+  // rest
+  showRest();
+}
+function showRest(){
+  WO.phase='rest';
+  WO.timeLeft=state.settings.rest;
+  const nextStep=WO.plan[WO.idx];
+  $('#wo-rest').classList.remove('hidden');
+  $('#wo-exname').textContent='つぎ：'+nextStep.ex.n;
+  $('#wo-note').textContent=nextStep.ex.note;
+  $('#wo-focus').textContent='🎯 次に意識：'+nextStep.ex.focus;
+  $('#wo-phase').classList.add('hidden');
+  $('#wo-cue').classList.add('hidden');
+  const tip=pickTip(); $('#wo-bubble').textContent='💡 '+tip.text; // 休憩中は豆知識の一等地
+  $('#wo-unit').textContent='秒 休憩';
+  $('#wo-target').textContent=WO.timeLeft;
+  $('#wo-target').onclick=null;
+  const acts=$('#wo-actions');
+  acts.innerHTML='<div class="btn-row"><button class="btn btn-ghost" id="wo-form" aria-label="次の種目の詳しいフォームを開く">📖 次の詳しいフォーム</button><button class="btn btn-primary" id="wo-next">休憩スキップ ▶</button></div>';
+  bindFormButton(nextStep);
+  $('#wo-next').onclick=()=>{stopTimer();showExercise();};
+  startRestCountdown();
+}
+function startRestCountdown(){
+  stopTimer();
+  WO.timer=setInterval(()=>{
+    WO.timeLeft--;$('#wo-target').textContent=WO.timeLeft;
+    if(WO.timeLeft<=3&&WO.timeLeft>0)beep(660,0.1);
+    if(WO.timeLeft<=0){stopTimer();beep(880,0.15);showExercise();}
+  },1000);
+}
+
+/* ============ finish & rewards ============ */
+function finishWorkout(){
+  stopTimer();
+  $('#workout').classList.add('hidden');
+  const t=TRAINERS[state.trainer];
+
+  // rewards
+  const expGain=WO.plan.length*12 + Math.round(WO.repsDone*0.6);
+  const affGain=WO.plan.length*15 + 30;
+
+  // streak
+  const today=todayStr();
+  let streakMsg='';
+  if(state.lastDate!==today){
+    if(state.lastDate && daysBetween(state.lastDate,today)===1){state.streak++;}
+    else if(state.lastDate && daysBetween(state.lastDate,today)===0){/*same*/}
+    else{state.streak=1;}
+    if(!state.lastDate)state.streak=1;
+    state.lastDate=today;
+    if(state.streak>state.bestStreak)state.bestStreak=state.streak;
+  }
+
+  state.totalWorkouts++;
+  state.totalReps+=WO.repsDone;
+
+  // affinity + rank up
+  const beforeRank=rankIndex(state.affinity[t.id]);
+  state.affinity[t.id]+=affGain;
+  const afterRank=rankIndex(state.affinity[t.id]);
+  let rankPop=null;
+  if(afterRank>beforeRank){rankPop=t.lines.rankUp[afterRank]||('親密度ランクが「'+rankName(state.affinity[t.id])+'」に！');}
+
+  // exp + level up
+  state.exp+=expGain;
+  let leveled=0;
+  while(state.exp>=expNeed(state.level)){state.exp-=expNeed(state.level);state.level++;leveled++;}
+
+  // badges
+  const newBadges=[];
+  BADGES.forEach(b=>{if(!state.badges.includes(b.id)&&b.chk(state)){state.badges.push(b.id);newBadges.push(b);}});
+
+  save();
+  renderTopStats();renderTrainers();
+
+  // result screen
+  const finishLo=pickLine('finishWorkout');
+  const finishLine=finishLo.text;
+  const metricLabel=WO.plan.every(x=>x.type==='pelvic')?'継続pt':'レップ';
+  say(finishLo, rankPop?rankLine(t.id,afterRank):null); // 完走セリフ→ランクアップセリフの順に再生
+
+  let html='<div class="result-card" style="--tc:'+t.color+'">'+
+    '<div class="wo-face" style="width:96px;height:96px;margin:0 auto 6px">'+avatarMarkup(state.trainer)+'</div>'+
+    '<div class="big">おつかれさま！</div>'+
+    '<div class="bubble" style="margin:10px auto 0">'+finishLine+'</div>'+
+    '<div class="gain">'+
+      '<div><div class="g-n" style="color:var(--exp)">+'+expGain+'</div><div class="g-l">EXP</div></div>'+
+      '<div><div class="g-n" style="color:'+t.color+'">+'+affGain+'</div><div class="g-l">親密度</div></div>'+
+      '<div><div class="g-n" style="color:var(--good)">'+WO.repsDone+'</div><div class="g-l">'+metricLabel+'</div></div>'+
+    '</div>';
+  if(leveled>0)html+='<div class="pop">🎉 レベルアップ！ Lv.'+(state.level-leveled)+' → Lv.'+state.level+'</div>';
+  if(rankPop)html+='<div class="pop rank">💞 '+t.name+'と絆が深まった！<br>「'+rankPop+'」</div>';
+  if(newBadges.length)html+='<div class="pop">🏅 バッジ獲得：'+newBadges.map(b=>b.e+b.n).join('、')+'</div>';
+  const rtip=pickTip();
+  html+='<div class="pop" style="background:color-mix(in srgb,'+t.color+' 14%,var(--card));border-color:'+t.color+';color:var(--txt)">💡 今日のヒント<br>'+rtip.text+'</div>';
+  html+='<div style="margin-top:16px" class="btn-row">'+
+      '<button class="btn btn-good" id="res-again">もう1セット</button>'+
+      '<button class="btn btn-ghost" id="res-home">ホームへ</button>'+
+    '</div></div>';
+  showSheet(html);
+  if(leveled)setTimeout(()=>beep(1046,0.15),200);
+  $('#res-home').onclick=()=>{closeSheet();switchTab('home');updateTrainerLine(false);};
+  $('#res-again').onclick=()=>{const mode=WO.mode,opts=WO.opts,title=WO.title;closeSheet();if(mode==='single')startWorkout(mode,opts,title);else openMode(mode==='free'?'free':mode);};
+}
+
+function quitWorkout(){
+  stopTimer();
+  $('#workout').classList.add('hidden');
+  try{speechSynthesis.cancel();}catch(e){}
+}
+
+/* ============ wire up ============ */
+document.querySelectorAll('.menu-grid .mcard').forEach(c=>{
+  c.onclick=()=>openMode(c.dataset.mode);
+  if(c.hasAttribute('tabindex'))c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();c.click();}};
+});
+document.querySelectorAll('#tabbar button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+$('#wo-quit').onclick=quitWorkout;
+$('#sheet').onclick=e=>{if(e.target.id==='sheet')closeSheet();};
+
+$('#tg-voice').onclick=()=>{state.settings.voice=!state.settings.voice;save();renderSettings();if(state.settings.voice){initVoice();speak('応援ボイス、オンだ');}};
+$('#tg-tts').onclick=()=>{state.settings.ttsFallback=(state.settings.ttsFallback===false);save();renderSettings();};
+$('#tg-sound').onclick=()=>{state.settings.sound=!state.settings.sound;save();renderSettings();if(state.settings.sound)beep(880,0.15);};
+document.querySelectorAll('.fs-btn').forEach(b=>b.onclick=()=>{state.settings.fontScale=b.dataset.fs;save();applyFontScale();renderSettings();});
+$('#rest-minus').onclick=()=>{state.settings.rest=Math.max(5,state.settings.rest-5);save();renderSettings();};
+$('#rest-plus').onclick=()=>{state.settings.rest=Math.min(120,state.settings.rest+5);save();renderSettings();};
+$('#reset-btn').onclick=()=>{
+  if($('#reset-btn').dataset.c){
+    try{localStorage.removeItem(KEY);}catch(e){}mem=null;
+    location.reload();
+  }else{
+    $('#reset-btn').dataset.c='1';$('#reset-btn').textContent='本当に消す？もう一度タップ';
+    setTimeout(()=>{const b=$('#reset-btn');if(b){b.dataset.c='';b.textContent='データをリセット';}},3000);
+  }
+};
+
+/* ============ init ============ */
+initVoice();
+applyFontScale();
+renderTrainers();
+renderTopStats();
+updateTrainerLine(false);
+// unlock audio on first touch
+document.body.addEventListener('touchstart',()=>{if(actx&&actx.state==='suspended')actx.resume();},{once:true});
+document.body.addEventListener('click',()=>{if(actx&&actx.state==='suspended')actx.resume();},{once:true});
+
+/* ============ PWA: service worker 登録 ============ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
