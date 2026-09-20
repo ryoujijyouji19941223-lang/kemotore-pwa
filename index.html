@@ -54,7 +54,7 @@
   .tcard.active{border-color:var(--tc); box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 30%,transparent), 0 8px 26px -12px var(--tc);}
   .tcard .face{width:82px; height:82px; margin:0 auto 6px; border-radius:14px; overflow:hidden; background:#0c1224;}
   .face svg,.face img,.wo-face svg,.wo-face img{width:100%; height:100%; display:block; object-fit:cover;}
-  .face img.default-trainer,.wo-face img.default-trainer{object-position:center 24%;}
+  .face img.default-trainer,.wo-face img.default-trainer{object-position:center top;}
   .tcard .tname{font-weight:800; font-size:14px;}
   .tcard .trole{font-size:10px; color:var(--sub); margin-top:2px;}
   .tcard .aff{font-size:10px; margin-top:6px; color:var(--tc); font-weight:700;}
@@ -77,22 +77,15 @@
   .core3-head .mark{width:42px;height:42px;border-radius:13px;background:#7aa2ff22;border:1px solid #7aa2ff66;display:grid;place-items:center;font-size:23px;flex:0 0 auto;}
   .core3-head h3{font-size:18px;margin:0 0 3px;}
   .core3-head p{font-size:11px;line-height:1.45;color:var(--sub);margin:0;}
-  .core3-label{font-size:11px;font-weight:800;color:#c7d2fe;margin:12px 0 7px;}
-  .core3-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-  .core3-seg.dose{grid-template-columns:repeat(3,1fr);}
-  .core3-choice{border:1px solid var(--line);border-radius:11px;background:#11182b;color:var(--sub);font:700 11px/1.25 inherit;padding:9px 4px;cursor:pointer;min-height:42px;}
-  .core3-choice.on{color:#fff;border-color:var(--accent);background:#314572;box-shadow:0 0 0 2px #7aa2ff22;}
-  .core3-choice small{display:block;font-size:9px;font-weight:500;opacity:.78;margin-top:2px;}
-  .core3-plan{display:flex;flex-direction:column;gap:6px;margin:12px 0;}
-  .core3-row{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:8px;background:#10172a;border:1px solid #2d3c65;border-radius:12px;padding:8px 10px;}
-  .core3-row .ico{font-size:19px;text-align:center;}
-  .core3-row b{font-size:13px;display:block;}
-  .core3-row small{font-size:10px;color:var(--sub);}
-  .core3-row strong{font-size:12px;color:#dbe5ff;text-align:right;}
+  .core3-plan{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0;}
+  .core3-row{display:flex;flex-direction:column;align-items:center;gap:3px;background:#10172a;border:1px solid #2d3c65;border-radius:14px;padding:11px 5px;text-align:center;}
+  .core3-row .ico{font-size:28px;line-height:1.1;}
+  .core3-row b{font-size:12px;display:block;}
+  .core3-row small{font-size:9px;color:var(--sub);line-height:1.35;}
+  .core3-row strong{font-size:11px;color:#dbe5ff;margin-top:3px;}
   .core3-week{font-size:10px;color:var(--sub);line-height:1.5;margin:8px 1px 12px;}
   .core3-week b{color:var(--txt);}
   .core3-note{font-size:10px;color:#b7c5e8;line-height:1.5;margin-top:10px;padding-top:10px;border-top:1px solid #324265;}
-  .core3-warning{color:#ffd98b;background:#3b2d1933;border:1px solid #7c5b2d;border-radius:10px;padding:8px 10px;margin:9px 0;font-size:10px;line-height:1.45;}
   .effort-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px;}
   .effort-row .btn{padding:10px 5px;font-size:11px;}
 
@@ -132,22 +125,25 @@
   .ex-desc{background:var(--card2); border:1px solid var(--line); border-top:none; border-radius:0 0 12px 12px; margin:-6px 2px 0; padding:10px 12px; font-size:12px; color:var(--sub); line-height:1.6;}
 
   /* ---- Workout runner ---- */
-  #workout{position:fixed; inset:0; background:var(--bg); z-index:50; display:flex; flex-direction:column; padding:16px 16px calc(16px + env(safe-area-inset-bottom)); max-width:520px; margin:0 auto;}
+  #workout{position:fixed; inset:0; height:100dvh; box-sizing:border-box; overflow:hidden; background:var(--bg); z-index:50; display:flex; flex-direction:column; padding:12px 16px calc(12px + env(safe-area-inset-bottom)); max-width:520px; margin:0 auto;}
   .wo-top{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--sub);}
-  .wo-top .quit{margin-left:auto; background:none; border:1px solid var(--line); color:var(--sub); border-radius:10px; padding:6px 10px; cursor:pointer; font-size:12px;}
+  .wo-top #wo-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .wo-top .top-action{background:none;border:1px solid var(--line);color:var(--sub);border-radius:10px;padding:6px 9px;cursor:pointer;font-size:11px;white-space:nowrap;}
+  .wo-top #wo-form-top{margin-left:auto;}
+  .wo-top .quit{color:#ffb0b8;border-color:#5a3440;}
   .wo-prog{display:flex; gap:5px; margin-top:12px;}
   .wo-prog i{flex:1; height:6px; border-radius:99px; background:var(--line);}
   .wo-prog i.done{background:var(--good);}
   .wo-prog i.cur{background:var(--accent);}
 
-  .wo-stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:6px;}
-  .wo-face{width:min(58vw,230px); height:min(58vw,230px); margin-bottom:6px; border-radius:22px; overflow:hidden; background:#0c1224; filter:drop-shadow(0 10px 28px rgba(0,0,0,.55));}
+  .wo-stage{flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:5px; padding:7px 0;}
+  .wo-face{width:min(48vw,24dvh,210px); height:min(48vw,24dvh,210px); flex:0 0 auto; margin-bottom:3px; border-radius:22px; overflow:hidden; background:#0c1224; filter:drop-shadow(0 10px 28px rgba(0,0,0,.55));}
   #workout:not(.hidden) .wo-face{animation:coach-breathe 2.8s ease-in-out infinite;}
   @keyframes coach-breathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.012)}}
   /* 文字サイズ 小/中/大 */
   body.fs-s .app, body.fs-s #workout .wo-stage, body.fs-s .sheet-inner{zoom:0.9;}
   body.fs-l .app, body.fs-l #workout .wo-stage, body.fs-l .sheet-inner{zoom:1.18;}
-  .bubble{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:10px 16px; font-size:14px; font-weight:600; max-width:340px; position:relative; margin-bottom:14px; line-height:1.5;}
+  .bubble{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:9px 14px; font-size:14px; font-weight:600; max-width:340px; position:relative; margin-bottom:7px; line-height:1.45;}
   .bubble:after{content:''; position:absolute; top:-8px; left:50%; transform:translateX(-50%); border:7px solid transparent; border-bottom-color:var(--card); border-top:0;}
   .wo-exname{font-size:28px; font-weight:900; letter-spacing:.5px;}
   .wo-target{font-size:64px; font-weight:900; line-height:1; margin:6px 0; background:linear-gradient(135deg,var(--accent),#a78bfa); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
@@ -155,7 +151,7 @@
   .wo-note{font-size:12px; color:var(--sub); max-width:320px; line-height:1.5;}
   .rest-badge{color:var(--warn); font-weight:800; font-size:14px; letter-spacing:1px;}
 
-  .wo-actions{display:flex; flex-direction:column; gap:10px;}
+  .wo-actions{display:flex; flex:0 0 auto; flex-direction:column; gap:8px; padding-top:7px;}
 
   /* ---- Result ---- */
   .result-card{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px; text-align:center;}
@@ -247,8 +243,13 @@
     .btn-row{flex-wrap:wrap;}
     .btn-row .btn{min-width:130px;flex:1;}
     .core3-card{padding:14px;}
-    .core3-seg{gap:5px;}
-    .core3-choice{font-size:10px;padding:8px 2px;}
+  }
+  @media(max-height:700px){
+    #workout{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));}
+    .wo-face{width:min(38vw,19dvh,150px);height:min(38vw,19dvh,150px);}
+    .wo-exname{font-size:22px;}.wo-target{font-size:52px;}.wo-note{font-size:11px;}
+    .bubble{padding:7px 12px;margin-bottom:3px;}.wo-stage{gap:3px;padding:4px 0;}
+    .btn{padding:11px 14px;}
   }
   @media(prefers-reduced-motion:reduce){#workout:not(.hidden) .wo-face{animation:none;}}
 </style>
@@ -283,20 +284,12 @@
     <section class="core3-card" aria-labelledby="core3-title">
       <div class="core3-head">
         <div class="mark" aria-hidden="true">🔥</div>
-        <div><h3 id="core3-title">今日も3つだけ</h3><p>スクワット・腕立て・腹筋は固定。育てたい場所だけ、セット数を多くします。</p></div>
+        <div><h3 id="core3-title">今日も3つだけ</h3><p>腕立て伏せ・スクワット・腹筋（クランチ）を1セットずつ。迷わず始められます。</p></div>
       </div>
-      <div class="core3-label">どこを大きく育てたい？</div>
-      <div class="core3-seg" id="core3-focus" aria-label="育てたい部位"></div>
-      <div class="core3-label">今日はどこまでやる？</div>
-      <div class="core3-seg dose" id="core3-dose" aria-label="トレーニング量"></div>
-      <div id="core3-warning"></div>
       <div class="core3-plan" id="core3-plan" aria-live="polite"></div>
       <div class="core3-week" id="core3-week"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" id="core3-start" aria-label="選んだ基本3種を開始する">この3種を始める</button>
-        <button class="btn btn-ghost" id="core3-minimum" aria-label="3分の最低限メニューを開始する">今日は3分だけ</button>
-      </div>
-      <div class="core3-note">毎日開いても大丈夫。ただし「育てる」を同じ部位で連日行う必要はありません。筋肉痛や関節痛が強い日は3分版・別部位・休息を選んでください。</div>
+      <button class="btn btn-primary" id="core3-start" aria-label="腕立て伏せ、スクワット、腹筋を開始する">基本3種を始める</button>
+      <div class="core3-note">各種目の前に、次の動きと意識する場所を表示します。もっとやりたい日は終了後に「もう1周」を選べます。痛みがある日は休んでください。</div>
     </section>
 
     <h2 class="sec">ほかのメニュー・図鑑</h2>
@@ -377,12 +370,7 @@
       </div>
     </div>
     <div class="setting-row">
-      <div><div class="sn">⏱️ セット間の休憩</div><div class="sd" id="rest-label">30秒</div></div>
-      <div class="spin" style="margin-left:auto;display:flex;gap:6px;align-items:center;">
-        <button class="btn btn-ghost btn-sm" id="rest-minus" style="width:40px">−</button>
-        <span style="min-width:40px;text-align:center;font-weight:800" id="rest-val">30</span>
-        <button class="btn btn-ghost btn-sm" id="rest-plus" style="width:40px">＋</button>
-      </div>
+      <div><div class="sn">⏱️ 休憩の扱い</div><div class="sd">基本メニューは次の説明画面で自分のペース。HIITだけ10秒休憩です</div></div>
     </div>
     <h2 class="sec">トレーナーの見た目</h2>
     <div id="img-swap"></div>
@@ -412,7 +400,8 @@
 <div id="workout" class="hidden">
   <div class="wo-top">
     <span id="wo-title">メニュー</span>
-    <button class="quit" id="wo-quit">やめる</button>
+    <button class="top-action" id="wo-form-top" aria-label="現在の種目の詳しいフォームを見る">📖 フォーム</button>
+    <button class="top-action quit" id="wo-quit">やめる</button>
   </div>
   <div class="wo-prog" id="wo-prog"></div>
   <div class="wo-stage">
@@ -1175,8 +1164,6 @@ function renderSettings(){
   $('#tg-voice').classList.toggle('on',state.settings.voice);
   $('#tg-tts').classList.toggle('on',state.settings.ttsFallback!==false);
   $('#tg-sound').classList.toggle('on',state.settings.sound);
-  $('#rest-val').textContent=state.settings.rest;
-  $('#rest-label').textContent=state.settings.rest+'秒';
   document.querySelectorAll('.fs-btn').forEach(b=>b.classList.toggle('btn-primary',b.dataset.fs===(state.settings.fontScale||'m')));
   document.querySelectorAll('.fs-btn').forEach(b=>b.classList.toggle('btn-ghost',b.dataset.fs!==(state.settings.fontScale||'m')));
   renderImgSwap();
@@ -1241,18 +1228,11 @@ function switchTab(name){
 }
 
 /* ============ build workout plan ============ */
-const CORE3_FOCUS={
-  balance:{label:'バランス',short:'全身を均等',icon:'⚖️',area:null},
-  chest:{label:'胸・腕',short:'腕立て多め',icon:'💪',area:'chest'},
-  glutes:{label:'お尻・脚',short:'スクワット多め',icon:'🍑',area:'glutes'},
-  core:{label:'お腹',short:'腹筋多め',icon:'🔥',area:'core'}
+const CORE3_EX={
+  chest:{key:'pushup',icon:'💪',label:'腕立て伏せ'},
+  glutes:{key:'squat',icon:'🦵',label:'スクワット'},
+  core:{key:'crunch',icon:'🔥',label:'腹筋（クランチ）'}
 };
-const CORE3_DOSE={
-  minimum:{label:'3分',short:'最低限'},
-  standard:{label:'6分',short:'基本'},
-  growth:{label:'10分+',short:'育てる'}
-};
-const CORE3_EX={chest:{key:'pushup',icon:'💪',label:'腕立て伏せ'},glutes:{key:'squat',icon:'🦵',label:'スクワット'},core:{key:'crunch',icon:'🔥',label:'クランチ'}};
 
 function currentWeekKey(){
   const d=new Date();d.setHours(0,0,0,0);
@@ -1263,54 +1243,24 @@ function ensureCore3Week(){
   const k=currentWeekKey();
   if(state.core3.weekKey!==k){state.core3.weekKey=k;state.core3.weekly={chest:0,glutes:0,core:0};save();}
 }
-function core3Targets(dose){
-  const base=dose==='minimum'?{chest:5,glutes:10,core:8}:dose==='growth'?{chest:10,glutes:15,core:12}:{chest:8,glutes:12,core:10};
+function core3Targets(){
+  const base={chest:8,glutes:12,core:10};
   const adj=Math.max(-4,Math.min(8,Number(state.core3.repAdjust)||0));
   return {chest:Math.max(3,base.chest+adj),glutes:Math.max(5,base.glutes+adj),core:Math.max(4,base.core+adj)};
 }
-function core3SetCounts(focus,dose){
-  const counts={chest:1,glutes:1,core:1};
-  if(dose==='minimum')return counts;
-  if(dose==='standard'){
-    if(focus==='balance')return {chest:2,glutes:2,core:2};
-    counts[focus]=3;return counts;
-  }
-  if(focus==='balance')return {chest:3,glutes:3,core:3};
-  return {chest:focus==='chest'?5:2,glutes:focus==='glutes'?5:2,core:focus==='core'?5:2};
-}
-function core3Items(focus,dose){
-  const sets=core3SetCounts(focus,dose),targets=core3Targets(dose),items=[];
-  const max=Math.max(sets.chest,sets.glutes,sets.core);
-  for(let round=0;round<max;round++){
-    ['chest','glutes','core'].forEach(area=>{if(round<sets[area])items.push({area,key:CORE3_EX[area].key,target:targets[area]});});
-  }
-  return items;
-}
-function core3Warning(focus,dose){
-  if(dose!=='growth'||focus==='balance')return '';
-  const stamp=state.core3.lastHard[focus];if(!stamp)return '';
-  const hours=(Date.now()-stamp)/3600000;
-  if(hours<36)return '前回の「'+CORE3_FOCUS[focus].label+'を育てる」から'+Math.max(1,Math.round(hours))+'時間ほどです。まだ強い筋肉痛があるなら、3分版か別の部位に変えてね。';
-  return '';
+function core3Items(){
+  const targets=core3Targets();
+  return ['chest','glutes','core'].map(area=>({area,key:CORE3_EX[area].key,target:targets[area]}));
 }
 function renderCore3(){
   ensureCore3Week();
-  const focus=CORE3_FOCUS[state.core3.focus]?state.core3.focus:'balance';
-  const dose=CORE3_DOSE[state.core3.dose]?state.core3.dose:'standard';
-  const counts=core3SetCounts(focus,dose),targets=core3Targets(dose);
-  $('#core3-focus').innerHTML=Object.entries(CORE3_FOCUS).map(([k,v])=>'<button class="core3-choice'+(k===focus?' on':'')+'" data-core3-focus="'+k+'" aria-pressed="'+(k===focus)+'">'+v.icon+' '+v.label+'<small>'+v.short+'</small></button>').join('');
-  $('#core3-dose').innerHTML=Object.entries(CORE3_DOSE).map(([k,v])=>'<button class="core3-choice'+(k===dose?' on':'')+'" data-core3-dose="'+k+'" aria-pressed="'+(k===dose)+'">'+v.label+'<small>'+v.short+'</small></button>').join('');
-  $('#core3-plan').innerHTML=['chest','glutes','core'].map(area=>{const x=CORE3_EX[area];return '<div class="core3-row"><span class="ico">'+x.icon+'</span><span><b>'+x.label+'</b><small>'+EX[x.key].primary+'を意識</small></span><strong>'+targets[area]+'回 × '+counts[area]+'セット</strong></div>';}).join('');
+  const targets=core3Targets();
+  $('#core3-plan').innerHTML=['chest','glutes','core'].map(area=>{const x=CORE3_EX[area];return '<div class="core3-row"><span class="ico" aria-hidden="true">'+x.icon+'</span><b>'+x.label+'</b><small>'+EX[x.key].primary+'を意識</small><strong>'+targets[area]+'回</strong></div>';}).join('');
   const w=state.core3.weekly;
-  $('#core3-week').innerHTML='今週の実行セット　胸・腕 <b>'+w.chest+'</b>　お尻・脚 <b>'+w.glutes+'</b>　お腹 <b>'+w.core+'</b><br>筋肥大を強く狙う場合の目安は、選んだ部位を週合計およそ10セット。最初は無理に届かせなくてOK。';
-  const warn=core3Warning(focus,dose);$('#core3-warning').innerHTML=warn?'<div class="core3-warning">⚠️ '+warn+'</div>':'';
-  document.querySelectorAll('[data-core3-focus]').forEach(b=>b.onclick=()=>{state.core3.focus=b.dataset.core3Focus;save();renderCore3();});
-  document.querySelectorAll('[data-core3-dose]').forEach(b=>b.onclick=()=>{state.core3.dose=b.dataset.core3Dose;save();renderCore3();});
+  $('#core3-week').innerHTML='今週　腕立て <b>'+w.chest+'</b>セット　スクワット <b>'+w.glutes+'</b>セット　腹筋 <b>'+w.core+'</b>セット';
 }
-function startCore3(forceMinimum){
-  const focus=state.core3.focus||'balance';const dose=forceMinimum?'minimum':(state.core3.dose||'standard');
-  if(forceMinimum){state.core3.dose='minimum';save();renderCore3();}
-  startWorkout('core3',{focus,dose},'基本3種：'+CORE3_FOCUS[focus].label+'・'+CORE3_DOSE[dose].short);
+function startCore3(){
+  startWorkout('core3',{},'基本3種');
 }
 
 // returns array of {ex, target, type}
@@ -1318,7 +1268,7 @@ function buildPlan(mode,opts){
   let plan=[];
   const mk=(key,target,meta)=>Object.assign({key,ex:EX[key],target:target||EX[key].def,type:EX[key].type},meta||{});
   if(mode==='core3'){
-    plan=core3Items(opts.focus||'balance',opts.dose||'standard').map(it=>mk(it.key,it.target,{coreArea:it.area}));
+    plan=core3Items().map(it=>mk(it.key,it.target,{coreArea:it.area}));
   }else if(mode==='beginner'){
     plan=[mk('pushup',10),mk('squat',15),mk('crunch',15),mk('plank',30)];
   }else if(mode==='bodypart'){
@@ -1405,7 +1355,7 @@ function sheetFree(){
           (it.open?'<div class="ex-desc">'+e.note+'</div>':'')+
         '</div>';
       }).join('')+'</div>'+
-      '<button class="btn btn-primary" id="fr-go">選んだ種目でスタート</button>';
+      '<div class="btn-row"><button class="btn btn-ghost" id="fr-cancel">ホームへ戻る</button><button class="btn btn-primary" id="fr-go">選んだ種目でスタート</button></div>';
     bind();
   };
   const bind=()=>{
@@ -1413,6 +1363,7 @@ function sheetFree(){
     $('#sheet-inner').querySelectorAll('[data-info]').forEach(b=>b.onclick=()=>{const i=+b.dataset.info;items[i].open=!items[i].open;render();});
     $('#sheet-inner').querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>{const i=+b.dataset.inc;const st=EX[items[i].key].type==='time'?5:1;items[i].target+=st;items[i].on=true;render();});
     $('#sheet-inner').querySelectorAll('[data-dec]').forEach(b=>b.onclick=()=>{const i=+b.dataset.dec;const st=EX[items[i].key].type==='time'?5:1;const min=EX[items[i].key].type==='time'?10:1;items[i].target=Math.max(min,items[i].target-st);render();});
+    $('#fr-cancel').onclick=closeSheet;
     $('#fr-go').onclick=()=>{const chosen=items.filter(x=>x.on);if(!chosen.length){toast('種目を1つ以上選んでね');return;}closeSheet();startWorkout('free',{items:chosen},'フリーメニュー');};
   };
   showSheet('');render();
@@ -1496,7 +1447,7 @@ function startWorkout(mode,opts,title){
   $('#wo-face').style.filter='drop-shadow(0 10px 24px '+TRAINERS[state.trainer].color+'55)';
   renderProg();
   // ここで挨拶は鳴らさない(最初の種目セリフと二重に鳴るのを防ぐ)
-  setTimeout(()=>showExercise(),300);
+  setTimeout(()=>showPreparation(true),300);
 }
 function renderProg(){
   const p=$('#wo-prog');p.innerHTML='';
@@ -1515,14 +1466,43 @@ function resumeWorkoutTimer(){
   else if(step&&step.type==='pelvic')startPelvicCountdown(step);
 }
 
-function bindFormButton(step){
-  const b=$('#wo-form');if(b)b.onclick=()=>openGuideDetail(step.key,true);
+function bindTopFormButton(step){
+  const b=$('#wo-form-top');
+  if(!b)return;
+  b.classList.toggle('hidden',!step);
+  b.onclick=step?()=>openGuideDetail(step.key,true):null;
+  if(step)b.setAttribute('aria-label',step.ex.n+'の詳しいフォームを見る');
+}
+
+function transitionLine(step,first){
+  const lead=first?'最初は':'次は';
+  if(state.trainer==='cat')return lead+step.ex.n+'だ。まず「'+step.ex.focus+'」を意識しろ。';
+  if(state.trainer==='dog')return lead+step.ex.n+'だよ！「'+step.ex.focus+'」を意識しよう。';
+  return lead+step.ex.n+'だぜ！「'+step.ex.focus+'」を意識していこう！';
+}
+
+function showPreparation(first){
+  stopTimer();
+  const step=WO.plan[WO.idx];
+  WO.phase='prepare';WO.tapCount=0;
+  renderProg();bindTopFormButton(step);
+  $('#wo-rest').classList.add('hidden');
+  $('#wo-exname').textContent=(first?'最初は ':'次は ')+step.ex.n;
+  $('#wo-note').textContent=step.ex.note;
+  $('#wo-focus').textContent='🎯 意識：'+step.ex.focus;
+  $('#wo-phase').classList.add('hidden');
+  $('#wo-cue').classList.add('hidden');
+  $('#wo-bubble').textContent=transitionLine(step,first);
+  $('#wo-target').textContent=step.type==='pelvic'?'専用':step.target;
+  $('#wo-unit').textContent=step.type==='time'?'秒':step.type==='pelvic'?'呼吸ガイド':'回';
+  $('#wo-actions').innerHTML='<button class="btn btn-primary" id="wo-start-ex">この種目をスタート</button>';
+  $('#wo-start-ex').onclick=showExercise;
 }
 
 function showExercise(){
   const step=WO.plan[WO.idx];
   WO.phase='exercise';WO.tapCount=0;
-  renderProg();
+  renderProg();bindTopFormButton(step);
   $('#wo-rest').classList.add('hidden');
   $('#wo-exname').textContent=step.ex.n;
   $('#wo-note').textContent=step.ex.note;
@@ -1538,21 +1518,18 @@ function showExercise(){
     WO.timeLeft=step.target;
     $('#wo-unit').textContent='秒';
     $('#wo-target').textContent=WO.timeLeft;
-    acts.innerHTML='<div class="btn-row"><button class="btn btn-ghost" id="wo-form" aria-label="'+step.ex.n+'の詳しいフォームを開く">📖 詳しいフォーム</button><button class="btn btn-ghost" id="wo-skip" aria-label="この種目をスキップする">スキップ ▶</button></div>';
-    bindFormButton(step);
+    acts.innerHTML='<button class="btn btn-ghost" id="wo-skip" aria-label="この種目をスキップする">スキップ ▶</button>';
     $('#wo-skip').onclick=()=>{stopTimer();afterExercise(step);};
     stopTimer();
     startExerciseCountdown(step);
   }else if(step.type==='pelvic'){
     initPelvicTimer(step);
-    acts.innerHTML='<div class="btn-row"><button class="btn btn-ghost" id="wo-form" aria-label="'+step.ex.n+'の詳しいフォームを開く">📖 詳しいフォーム</button><button class="btn btn-ghost" id="wo-skip" aria-label="このガイドをスキップする">スキップ ▶</button></div>';
-    bindFormButton(step);
+    acts.innerHTML='<button class="btn btn-ghost" id="wo-skip" aria-label="このガイドをスキップする">スキップ ▶</button>';
     $('#wo-skip').onclick=()=>{stopTimer();afterExercise(step);};
   }else{
     $('#wo-unit').textContent='回';
     $('#wo-target').textContent=step.target;
-    acts.innerHTML='<button class="btn btn-ghost" id="wo-form" aria-label="'+step.ex.n+'の詳しいフォームを開く">📖 詳しいフォーム</button><button class="btn btn-good" id="wo-done" aria-label="'+step.target+'回完了した">✓ 完了（'+step.target+'回やった）</button>';
-    bindFormButton(step);
+    acts.innerHTML='<button class="btn btn-good" id="wo-done" aria-label="'+step.target+'回完了した">✓ 完了（'+step.target+'回やった）</button>';
     $('#wo-done').onclick=()=>{beep(1320,0.2);afterExercise(step);};
   }
 }
@@ -1607,26 +1584,27 @@ function afterExercise(step){
   say(setLo);
   WO.idx++;
   if(WO.idx>=WO.plan.length){setTimeout(finishWorkout,700);return;}
-  // rest
-  showRest();
+  // HIITだけ10秒休憩。それ以外は次の説明画面で、自分のペースで始める。
+  if(WO.mode==='hiit')showRest();
+  else showPreparation(false);
 }
 function showRest(){
   WO.phase='rest';
-  WO.timeLeft=state.settings.rest;
+  WO.timeLeft=10;
   const nextStep=WO.plan[WO.idx];
+  bindTopFormButton(nextStep);
   $('#wo-rest').classList.remove('hidden');
   $('#wo-exname').textContent='つぎ：'+nextStep.ex.n;
   $('#wo-note').textContent=nextStep.ex.note;
   $('#wo-focus').textContent='🎯 次に意識：'+nextStep.ex.focus;
   $('#wo-phase').classList.add('hidden');
   $('#wo-cue').classList.add('hidden');
-  const tip=pickTip(); $('#wo-bubble').textContent='💡 '+tip.text; // 休憩中は豆知識の一等地
+  $('#wo-bubble').textContent=transitionLine(nextStep,false);
   $('#wo-unit').textContent='秒 休憩';
   $('#wo-target').textContent=WO.timeLeft;
   $('#wo-target').onclick=null;
   const acts=$('#wo-actions');
-  acts.innerHTML='<div class="btn-row"><button class="btn btn-ghost" id="wo-form" aria-label="次の種目の詳しいフォームを開く">📖 次の詳しいフォーム</button><button class="btn btn-primary" id="wo-next">休憩スキップ ▶</button></div>';
-  bindFormButton(nextStep);
+  acts.innerHTML='<button class="btn btn-primary" id="wo-next">休憩を飛ばして始める ▶</button>';
   $('#wo-next').onclick=()=>{stopTimer();showExercise();};
   startRestCountdown();
 }
@@ -1668,8 +1646,7 @@ function finishWorkout(){
   if(WO.mode==='core3'){
     ensureCore3Week();
     WO.plan.forEach(step=>{if(step.coreArea)state.core3.weekly[step.coreArea]=(state.core3.weekly[step.coreArea]||0)+1;});
-    if(WO.opts.dose==='growth'&&WO.opts.focus&&WO.opts.focus!=='balance')state.core3.lastHard[WO.opts.focus]=Date.now();
-    state.core3.lastCompleted={at:Date.now(),focus:WO.opts.focus,dose:WO.opts.dose};
+    state.core3.lastCompleted={at:Date.now()};
   }
 
   // affinity + rank up
@@ -1713,7 +1690,7 @@ function finishWorkout(){
   html+='<div class="pop" style="background:color-mix(in srgb,'+t.color+' 14%,var(--card));border-color:'+t.color+';color:var(--txt)">💡 今日のヒント<br>'+rtip.text+'</div>';
   if(WO.mode==='core3')html+='<div class="guide-section" style="margin-top:12px;text-align:left"><h4>今日のきつさは？</h4><p>1回だけ選ぶと、次回の3種すべてを少し調整します。</p><div class="effort-row"><button class="btn btn-ghost" data-effort="hard">きつすぎた<br>−2回</button><button class="btn btn-ghost" data-effort="good">ちょうどいい<br>維持</button><button class="btn btn-ghost" data-effort="easy">余裕だった<br>＋1回</button></div></div>';
   html+='<div style="margin-top:16px" class="btn-row">'+
-      '<button class="btn btn-good" id="res-again">もう1セット</button>'+
+      '<button class="btn btn-good" id="res-again">'+(WO.mode==='core3'?'もう1周':'もう1セット')+'</button>'+
       '<button class="btn btn-ghost" id="res-home">ホームへ</button>'+
     '</div></div>';
   showSheet(html);
@@ -1742,8 +1719,7 @@ document.querySelectorAll('.menu-grid .mcard').forEach(c=>{
   c.onclick=()=>openMode(c.dataset.mode);
   if(c.hasAttribute('tabindex'))c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();c.click();}};
 });
-$('#core3-start').onclick=()=>startCore3(false);
-$('#core3-minimum').onclick=()=>startCore3(true);
+$('#core3-start').onclick=startCore3;
 document.querySelectorAll('#tabbar button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $('#wo-quit').onclick=quitWorkout;
 $('#sheet').onclick=e=>{if(e.target.id==='sheet')closeSheet();};
@@ -1752,8 +1728,6 @@ $('#tg-voice').onclick=()=>{state.settings.voice=!state.settings.voice;save();re
 $('#tg-tts').onclick=()=>{state.settings.ttsFallback=(state.settings.ttsFallback===false);save();renderSettings();};
 $('#tg-sound').onclick=()=>{state.settings.sound=!state.settings.sound;save();renderSettings();if(state.settings.sound)beep(880,0.15);};
 document.querySelectorAll('.fs-btn').forEach(b=>b.onclick=()=>{state.settings.fontScale=b.dataset.fs;save();applyFontScale();renderSettings();});
-$('#rest-minus').onclick=()=>{state.settings.rest=Math.max(5,state.settings.rest-5);save();renderSettings();};
-$('#rest-plus').onclick=()=>{state.settings.rest=Math.min(120,state.settings.rest+5);save();renderSettings();};
 $('#reset-btn').onclick=()=>{
   if($('#reset-btn').dataset.c){
     try{localStorage.removeItem(KEY);}catch(e){}mem=null;

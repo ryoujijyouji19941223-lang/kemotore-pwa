@@ -54,8 +54,6 @@ const document={
   createElement:()=>new Element(),
   querySelector:s=>s.startsWith('#')?get(s.slice(1)):new Element(),
   querySelectorAll:s=>{
-    if(s==='[data-core3-focus]')return dataButtons('data-core3-focus');
-    if(s==='[data-core3-dose]')return dataButtons('data-core3-dose');
     if(s==='[data-effort]')return dataButtons('data-effort');
     return [];
   }
@@ -83,29 +81,40 @@ assert.match(vm.runInContext("avatarMarkup('dog',false)",context),/assets\/train
 assert.match(vm.runInContext("avatarMarkup('bear',true)",context),/assets\/trainers\/gou\.webp/,'Gou should use bundled artwork by default');
 vm.runInContext("state.customImg.cat='data:image/png;base64,custom';",context);
 assert.match(vm.runInContext("avatarMarkup('cat',false)",context),/data:image\/png;base64,custom/,'custom artwork should still override bundled artwork');
-assert.equal(document.querySelectorAll('[data-core3-focus]').length,4,'four focus choices should render');
-assert.equal(document.querySelectorAll('[data-core3-dose]').length,3,'three dose choices should render');
 assert.match(get('core3-plan').innerHTML,/腕立て伏せ/);
 assert.match(get('core3-plan').innerHTML,/スクワット/);
-assert.match(get('core3-plan').innerHTML,/クランチ/);
+assert.match(get('core3-plan').innerHTML,/腹筋（クランチ）/);
+assert.doesNotMatch(html,/どこを大きく育てたい/,'Core 3 should not ask for a redundant body-part focus');
 
-const chestStandard=vm.runInContext("buildPlan('core3',{focus:'chest',dose:'standard'})",context);
-assert.equal(chestStandard.length,5);
-assert.equal(chestStandard.filter(x=>x.coreArea==='chest').length,3);
-assert.equal(chestStandard.filter(x=>x.coreArea==='glutes').length,1);
-assert.equal(chestStandard.filter(x=>x.coreArea==='core').length,1);
+const core3=vm.runInContext("buildPlan('core3',{})",context);
+assert.equal(core3.length,3);
+assert.deepEqual([...core3.map(x=>x.key)],['pushup','squat','crunch']);
+assert.deepEqual([...core3.map(x=>x.coreArea)],['chest','glutes','core']);
 
-const balancedGrowth=vm.runInContext("buildPlan('core3',{focus:'balance',dose:'growth'})",context);
-assert.equal(balancedGrowth.length,9);
-assert.deepEqual([...new Set(balancedGrowth.map(x=>x.key))].sort(),['crunch','pushup','squat']);
+vm.runInContext("startWorkout('core3',{},'基本3種'); showPreparation(true);",context);
+assert.equal(vm.runInContext('WO.phase',context),'prepare');
+assert.match(get('wo-exname').textContent,/最初は.*腕立て伏せ/);
+assert.match(get('wo-focus').textContent,/意識/);
+assert.match(get('wo-actions').innerHTML,/この種目をスタート/);
+assert.equal(typeof get('wo-start-ex').onclick,'function');
+get('wo-start-ex').onclick();
+assert.equal(vm.runInContext('WO.phase',context),'exercise');
+assert.doesNotMatch(get('wo-actions').innerHTML,/詳しいフォーム/,'form button should live in the top bar');
+vm.runInContext('afterExercise(WO.plan[0])',context);
+assert.equal(vm.runInContext('WO.phase',context),'prepare','Core 3 should use a self-paced next-exercise screen instead of a forced rest timer');
+assert.match(get('wo-exname').textContent,/次は.*スクワット/);
 
-vm.runInContext("startWorkout('core3',{focus:'balance',dose:'minimum'},'rest-test'); WO.idx=1; showRest();",context);
-assert.equal(vm.runInContext('WO.timeLeft',context),5,'saved rest duration should be used');
+vm.runInContext("startWorkout('hiit',{rounds:2},'HIIT rest test'); WO.idx=1; showRest();",context);
+assert.equal(vm.runInContext('WO.timeLeft',context),10,'HIIT rest should be fixed at 10 seconds');
+assert.match(get('wo-bubble').textContent,/次は/,'rest screen should explain the next exercise');
 
-vm.runInContext("startWorkout('core3',{focus:'chest',dose:'standard'},'test'); finishWorkout();",context);
-assert.equal(vm.runInContext('state.core3.weekly.chest',context),3);
+vm.runInContext("startWorkout('core3',{},'test'); finishWorkout();",context);
 assert.equal(vm.runInContext('state.core3.weekly.glutes',context),1);
 assert.equal(vm.runInContext('state.core3.weekly.core',context),1);
+assert.equal(vm.runInContext('state.core3.weekly.chest',context),1);
 assert.equal(JSON.parse(saved.get('kemotore_v1')).customLegacyField,'keep-me');
 
-console.log('PASS: syntax, trainer artwork, offline cache, custom override, legacy storage, Core 3 rendering, focus allocation, rest setting, weekly set tracking');
+vm.runInContext('sheetFree()',context);
+assert.match(get('sheet-inner').innerHTML,/ホームへ戻る/,'free menu should have an explicit cancel button');
+
+console.log('PASS: syntax, trainer artwork, offline cache, custom override, legacy storage, fixed Core 3, preparation flow, HIIT rest, free-menu cancel, weekly tracking');
