@@ -137,10 +137,10 @@
   .wo-prog i.cur{background:var(--accent);}
 
   .wo-stage{flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:5px; padding:7px 0;}
-  .wo-face{width:min(48vw,24dvh,210px); height:min(48vw,24dvh,210px); flex:0 0 auto; margin-bottom:3px; border-radius:22px; overflow:hidden; background:#0c1224; filter:drop-shadow(0 10px 28px rgba(0,0,0,.55)); transition:width .28s ease,height .28s ease;}
-  /* 実際に運動している間はトレーナーを画面の主役にする */
-  #workout.is-active .wo-face{width:min(78vw,40dvh,360px);height:min(78vw,40dvh,360px);}
-  #workout.is-active .wo-face img{object-fit:contain;object-position:center top;}
+  .wo-face{width:min(74vw,34dvh,320px); height:min(74vw,34dvh,320px); flex:0 0 auto; margin-bottom:3px; border-radius:22px; overflow:hidden; background:#0c1224; filter:drop-shadow(0 10px 28px rgba(0,0,0,.55)); transition:width .28s ease,height .28s ease;}
+  /* 説明中から大きく、実際に運動している間はさらに大きく表示 */
+  #workout .wo-face img{object-fit:contain;object-position:center top;}
+  #workout.is-active .wo-face{width:min(88vw,46dvh,400px);height:min(88vw,46dvh,400px);}
   #workout:not(.hidden) .wo-face{animation:coach-breathe 2.8s ease-in-out infinite;}
   @keyframes coach-breathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.012)}}
   /* 文字サイズ 小/中/大 */
@@ -249,8 +249,8 @@
   }
   @media(max-height:700px){
     #workout{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom));}
-    .wo-face{width:min(38vw,19dvh,150px);height:min(38vw,19dvh,150px);}
-    #workout.is-active .wo-face{width:min(68vw,30dvh,230px);height:min(68vw,30dvh,230px);}
+    .wo-face{width:min(70vw,28dvh,240px);height:min(70vw,28dvh,240px);}
+    #workout.is-active .wo-face{width:min(86vw,38dvh,310px);height:min(86vw,38dvh,310px);}
     .wo-exname{font-size:22px;}.wo-target{font-size:52px;}.wo-note{font-size:11px;}
     .bubble{padding:7px 12px;margin-bottom:3px;}.wo-stage{gap:3px;padding:4px 0;}
     .btn{padding:11px 14px;}
